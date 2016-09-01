@@ -58,6 +58,9 @@ vtkActor2D* GuidewareTrackingWindow::readRawFile(const QString &file){
 
     vtkActor2D* actor = vtkActor2D::New();
     actor->SetMapper(mapper);
+
+    QFile::remove(file);
+
     return actor;
 }
 
@@ -92,6 +95,7 @@ void GuidewareTrackingWindow::updateLastFrame(){
             this->displayImage(act);
 
             //copy&remove
+            currentFile.remove();
 
             currentNormalIndex++;
         }
@@ -104,8 +108,6 @@ void GuidewareTrackingWindow::updateLastFrame(){
         {
             vtkActor2D* act = this->readRawFile(currentFilePath);
             this->displayImage(act);
-
-            //copy&remove
 
             currentReconstructIndex++;
         }
@@ -282,6 +284,39 @@ void GuidewareTrackingWindow::setConnections(){
     this->connect(screenShotButton, SIGNAL(clicked()), this, SLOT(screenShot()));
     this->connect(resetButton, SIGNAL(clicked()), this, SLOT(changeStateToReconstruct()));
     this->connect(this->displayTaskTimer, SIGNAL(timeout()), this, SLOT(updateLastFrame()));
+    this->connect(this->playButton, SIGNAL(clicked()), this, SLOT(startNaigation()));
+}
+
+//!----------------------------------------------------------------------------------------------------
+//!
+//! \brief GuidewareTrackingWindow::startNaigation
+//!
+void GuidewareTrackingWindow::startNaigation(){
+    //! -----------------------------------------------------------------------
+    QString collaborativeState = "on"; //on/off
+    QString collaborativeName = this->patientHandling->getName();
+    QString collaborativeType = "navigation"; //standby/normal/reconstruct/reconstructed
+    QString collaborativePath = this->patientHandling->getCTImagePath() + "normal";
+
+    QFile f(this->configuratonFilePath);
+    if(!f.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        cout << "Open failed." << endl;
+    }
+
+    QTextStream txtOutput(&f);
+    QString s1(collaborativeState);
+    QString s2(collaborativeName);
+    QString s3(collaborativeType);
+    QString s4(collaborativePath);
+
+    txtOutput << "state:" << s1 << endl;
+    txtOutput << "name:" << s2 << endl;
+    txtOutput << "type:" << s3 << endl;
+    txtOutput << "path:" << s4 << endl;
+
+    f.close();
+    //! -----------------------------------------------------------------------
 }
 
 //!--------------------------------------------------------------------------------------------------------------------------------

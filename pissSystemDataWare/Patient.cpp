@@ -97,6 +97,9 @@ bool Patient::doReadReconstructedResult(){
         minimumGrayScaleValue = statisticsList[1].toInt(0, 10);
 
         frequencies = imageProcessingFactory->getHistogramFrom(MriImageForDisplay);
+
+        //QFile::remove(myPath + "/bidimensionel__images/reconstruct/result.raw");
+
         return true;
     }
 

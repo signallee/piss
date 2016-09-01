@@ -182,6 +182,7 @@ public slots:
     void screenShot();
     void updateLastFrame();
     void changeStateToReconstruct();
+    void startNaigation();
 
 public:
     explicit GuidewareTrackingWindow(QRect rect,
