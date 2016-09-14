@@ -466,8 +466,8 @@ void SurgeryPlanWindow::initialRendering(){
     this->opacityTransferChoice->setChecked(true);
     this->generateNewOpacityPoint(min ,               0.0);
     if(max  != 1){
-        this->generateNewOpacityPoint(350, 0.0);
-        this->generateNewOpacityPoint(500, 1.8);
+        this->generateNewOpacityPoint(0, 0.0);
+        this->generateNewOpacityPoint(150, 1.8);
         this->generateNewOpacityPoint(700, 0.0);
         this->generateNewOpacityPoint(1000, 0.0);
     }
