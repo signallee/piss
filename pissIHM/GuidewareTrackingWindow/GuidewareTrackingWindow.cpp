@@ -54,7 +54,7 @@ vtkActor2D* GuidewareTrackingWindow::readRawFile(const QString &file){
 
     mapper->SetInputData(imageReader->GetOutput());
     mapper->SetColorWindow(20000);
-    mapper->SetColorLevel(800);
+    mapper->SetColorLevel(7);
 
     vtkActor2D* actor = vtkActor2D::New();
     actor->SetMapper(mapper);
@@ -85,17 +85,21 @@ void GuidewareTrackingWindow::displayImage(vtkActor2D* act){
 //! \brief GuidewareTrackingWindow::updateLastFrame
 //!
 void GuidewareTrackingWindow::updateLastFrame(){
-    if(collaborativeType == "normal"){
-        currentFilePath = currentWorkDir.absolutePath() + "\\normal\\" + this->getCurrentNormalFileName(currentNormalIndex);
+    //qDebug()<<"updateLastFrame"<<collaborativeType;
+    if(collaborativeType == "navi"){
+        currentFilePath = currentWorkDir.absolutePath() + "\\navi\\" + this->getCurrentNaviFileName(currentNormalIndex);
         currentFilePath.replace("/", "\\");
         QFile currentFile(currentFilePath);
+
         if(currentFile.exists())
         {
+
             vtkActor2D* act = this->readRawFile(currentFilePath);
             this->displayImage(act);
 
             //copy&remove
-            currentFile.remove();
+            currentFile.remove(currentFilePath);
+
 
             currentNormalIndex++;
         }
@@ -108,9 +112,13 @@ void GuidewareTrackingWindow::updateLastFrame(){
         {
             vtkActor2D* act = this->readRawFile(currentFilePath);
             this->displayImage(act);
+            //currentFile.remove(currentFilePath);
 
             currentReconstructIndex++;
         }
+//        if(currentReconstructIndex == 180){
+//            currentReconstructIndex = 0;
+//        }
     }
 
 }
@@ -124,8 +132,8 @@ void GuidewareTrackingWindow::update(){
     //! collaborativePath
     collaborativeState = "on"; //on/off
     collaborativeName = this->patientHandling->getName();
-    collaborativeType = "reconstruct"; //standby/normal/reconstruct
-    collaborativePath = this->patientHandling->getCTImagePath() + "reconstruct";
+    collaborativeType = "standby"; //standby/normal/reconstruct
+    collaborativePath = "None";
 
     QFile f(this->configuratonFilePath);
     if(!f.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -154,7 +162,7 @@ void GuidewareTrackingWindow::update(){
     //! display on the left top window
     //this->GuidewireAndVesselMergeDisplay(this->patientHandling->fetchLatestCTImageForDisplay());
     //this->GuidewireAndVesselMergeDisplay(this->patientHandling->fetchLatestCTImageForDisplay()->getImage());
-    this->displayTaskTimer->start(200);
+    this->displayTaskTimer->start(20);
 }
 
 //!----------------------------------------------------------------------------------------------------
@@ -183,36 +191,6 @@ void GuidewareTrackingWindow::closeSystem(){
                                    tr("Yes"),
                                    tr("No"))))
         this->close();
-}
-
-//!----------------------------------------------------------------------------------------------------
-//!
-//! \brief GuidewareTrackingWindow::changeStateToReconstruct
-//!
-void GuidewareTrackingWindow::changeStateToReconstruct(){
-    collaborativeState = "on";
-    collaborativeName = this->patientHandling->getName();
-    collaborativeType = "reconstruct";
-    collaborativePath = this->patientHandling->getCTImagePath() + "reconstruct";
-
-    QFile f(this->configuratonFilePath);
-    if(!f.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        cout << "Open failed." << endl;
-    }
-
-    QTextStream txtOutput(&f);
-    QString s1(collaborativeState);
-    QString s2(collaborativeName);
-    QString s3(collaborativeType);
-    QString s4(collaborativePath);
-
-    txtOutput << "state:" << s1 << endl;
-    txtOutput << "name:" << s2 << endl;
-    txtOutput << "type:" << s3 << endl;
-    txtOutput << "path:" << s4 << endl;
-
-    f.close();
 }
 
 //!----------------------------------------------------------------------------------------------------
@@ -289,14 +267,44 @@ void GuidewareTrackingWindow::setConnections(){
 
 //!----------------------------------------------------------------------------------------------------
 //!
+//! \brief GuidewareTrackingWindow::changeStateToReconstruct
+//!
+void GuidewareTrackingWindow::changeStateToReconstruct(){
+    collaborativeState = "on";
+    collaborativeName = this->patientHandling->getName();
+    collaborativeType = "reconstruct";
+    collaborativePath = this->patientHandling->getCTImagePath() + "reconstruct";
+
+    QFile f(this->configuratonFilePath);
+    if(!f.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        cout << "Open failed." << endl;
+    }
+
+    QTextStream txtOutput(&f);
+    QString s1(collaborativeState);
+    QString s2(collaborativeName);
+    QString s3(collaborativeType);
+    QString s4(collaborativePath);
+
+    txtOutput << "state:" << s1 << endl;
+    txtOutput << "name:" << s2 << endl;
+    txtOutput << "type:" << s3 << endl;
+    txtOutput << "path:" << s4 << endl;
+
+    f.close();
+}
+
+//!----------------------------------------------------------------------------------------------------
+//!
 //! \brief GuidewareTrackingWindow::startNaigation
 //!
 void GuidewareTrackingWindow::startNaigation(){
     //! -----------------------------------------------------------------------
-    QString collaborativeState = "on"; //on/off
-    QString collaborativeName = this->patientHandling->getName();
-    QString collaborativeType = "navigation"; //standby/normal/reconstruct/reconstructed
-    QString collaborativePath = this->patientHandling->getCTImagePath() + "normal";
+    collaborativeState = "on"; //on/off
+    collaborativeName = this->patientHandling->getName();
+    collaborativeType = "navi"; //standby/normal/reconstruct/reconstructed
+    collaborativePath = this->patientHandling->getCTImagePath() + "navi";
 
     QFile f(this->configuratonFilePath);
     if(!f.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -358,9 +366,9 @@ void GuidewareTrackingWindow::drawBackground(){
 //! \param index
 //! \return
 //!
-QString GuidewareTrackingWindow::getCurrentNormalFileName(long long index){
+QString GuidewareTrackingWindow::getCurrentNaviFileName(long long index){
     QString fileName;
-    fileName = "NOR1" + QString("%1").arg(index, 7, 10, QLatin1Char('0')) + ".raw";
+    fileName = "NAV1" + QString("%1").arg(index, 7, 10, QLatin1Char('0')) + ".raw";
     return fileName;
 }
 

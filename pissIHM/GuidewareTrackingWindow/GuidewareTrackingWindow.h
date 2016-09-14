@@ -73,7 +73,7 @@ public:
     void setPatientHandling(Patient *patientHandling);
     void update();
 
-    QString getCurrentNormalFileName(long long index);
+    QString getCurrentNaviFileName(long long index);
     QString getCurrentReconstructFileName(long long index);
     vtkActor2D* readRawFile(const QString &file);
 

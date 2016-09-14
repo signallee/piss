@@ -611,7 +611,7 @@ void PatientsWidget::display(vtkImageData *imgToBeDisplayed){
     this->volumeMapper->SetInputData(imgToBeDisplayed);
     this->volumeMapper->SetBlendModeToMaximumIntensity();
     this->volume->SetMapper(volumeMapper);
-    this->volume->SetProperty(volumeProperty);
+    //this->volume->SetProperty(volumeProperty);
 
     this->originVolumeDataRenderer->AddVolume(volume);
     this->renderWindow->AddRenderer(originVolumeDataRenderer);
