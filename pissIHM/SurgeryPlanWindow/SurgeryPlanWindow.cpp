@@ -465,12 +465,9 @@ void SurgeryPlanWindow::initialRendering(){
     //! doit etre calibrer selons les differentes valeurs maximaux
     this->opacityTransferChoice->setChecked(true);
     this->generateNewOpacityPoint(min ,               0.0);
-    if(max  != 1){
-        this->generateNewOpacityPoint(0, 0.0);
-        this->generateNewOpacityPoint(150, 1.8);
-        this->generateNewOpacityPoint(700, 0.0);
-        this->generateNewOpacityPoint(1000, 0.0);
-    }
+
+    this->generateNewOpacityPoint(900, 0.0);
+    this->generateNewOpacityPoint(1700, 1.8);
     this->generateNewOpacityPoint(max,                1.8);
 
     this->colorTransferChoice->setChecked(true);

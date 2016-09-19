@@ -53,13 +53,14 @@ vtkActor2D* GuidewareTrackingWindow::readRawFile(const QString &file){
     imageReader->Update();
 
     mapper->SetInputData(imageReader->GetOutput());
+    //mapper->SetRenderToRectangle(0);
     mapper->SetColorWindow(20000);
-    mapper->SetColorLevel(7);
+    mapper->SetColorLevel(7000);
 
     vtkActor2D* actor = vtkActor2D::New();
     actor->SetMapper(mapper);
 
-    QFile::remove(file);
+    //QFile::remove(file);
 
     return actor;
 }
@@ -72,11 +73,17 @@ vtkActor2D* GuidewareTrackingWindow::readRawFile(const QString &file){
 void GuidewareTrackingWindow::displayImage(vtkActor2D* act){
     mainRenderer->RemoveAllViewProps();
     mainRenderer->AddActor2D(act);
+    renderWindow->SetSize(1541, 1352);
+
     this->renderWindow->AddRenderer(mainRenderer);
+
+    int *i = this->renderWindow->GetSize();
+    qDebug()<<i[0]<<i[1];
+
     this->guidewareTrackingDisplayWidget->SetRenderWindow(renderWindow);
 
-    this->mainRenderer->ResetCamera();
-    this->renderWindow->Render();
+    //this->mainRenderer->ResetCamera();
+    //this->renderWindow->Render();
     this->guidewareTrackingDisplayWidget->update();
 }
 
@@ -251,6 +258,9 @@ void GuidewareTrackingWindow::initVariable(){
     // Specify the size of the image data
     imageData->SetDimensions(1560, 1440, 1);
     imageData->AllocateScalars(VTK_UNSIGNED_SHORT,1);
+
+    renderWindow->SetSize(1560, 1440);
+
 }
 
 //!----------------------------------------------------------------------------------------------------
