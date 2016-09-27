@@ -18,6 +18,8 @@ GuidewareTrackingWindow::GuidewareTrackingWindow(QRect rect,
     this->y = rect.y();
     this->width = rect.width();
     this->height = rect.height();
+
+
     this->systemDispatcher = systemDispatcher;
     this->globalWorkSpaceColor = globalWorkSpaceColor;
     this->configuratonFilePath = configuratonFilePath;
@@ -27,6 +29,7 @@ GuidewareTrackingWindow::GuidewareTrackingWindow(QRect rect,
     this->constructionIHM();
     this->setConnections();
     this->drawBackground();
+
 }
 
 //!----------------------------------------------------------------------------------------------------
@@ -52,7 +55,16 @@ vtkActor2D* GuidewareTrackingWindow::readRawFile(const QString &file){
     imageReader->SetDataScalarTypeToUnsignedShort();
     imageReader->Update();
 
-    mapper->SetInputData(imageReader->GetOutput());
+    //Magnify
+    scaleMagnify->SetInputConnection(imageReader->GetOutputPort());
+    scaleMagnify->SetMagnificationFactors(11,10,1);
+    //Shrink
+    Shrink->SetInputConnection(scaleMagnify->GetOutputPort());
+    Shrink->SetShrinkFactors(15,14,1);
+
+    mapper->SetInputConnection(Shrink->GetOutputPort());
+
+//    mapper->SetInputData(imageReader->GetOutput());
     //mapper->SetRenderToRectangle(0);
     mapper->SetColorWindow(20000);
     mapper->SetColorLevel(7000);
@@ -65,6 +77,7 @@ vtkActor2D* GuidewareTrackingWindow::readRawFile(const QString &file){
     return actor;
 }
 
+
 //!----------------------------------------------------------------------------------------------------
 //!
 //! \brief GuidewareTrackingWindow::GuidewireAndVesselMergeDisplay
@@ -73,12 +86,9 @@ vtkActor2D* GuidewareTrackingWindow::readRawFile(const QString &file){
 void GuidewareTrackingWindow::displayImage(vtkActor2D* act){
     mainRenderer->RemoveAllViewProps();
     mainRenderer->AddActor2D(act);
-    renderWindow->SetSize(1541, 1352);
+    //renderWindow->SetSize(1541, 1352);
 
     this->renderWindow->AddRenderer(mainRenderer);
-
-    int *i = this->renderWindow->GetSize();
-    qDebug()<<i[0]<<i[1];
 
     this->guidewareTrackingDisplayWidget->SetRenderWindow(renderWindow);
 
@@ -112,8 +122,10 @@ void GuidewareTrackingWindow::updateLastFrame(){
         }
     }
     else if(collaborativeType == "reconstruct"){
+
         currentFilePath = currentWorkDir.absolutePath() + "\\reconstruct\\" + this->getCurrentReconstructFileName(currentReconstructIndex);
         currentFilePath.replace("/", "\\");
+        //qDebug()<<currentFilePath;
         QFile currentFile(currentFilePath);
         if(currentFile.exists())
         {
@@ -245,6 +257,8 @@ void GuidewareTrackingWindow::initVariable(){
     ctImageActor = vtkSmartPointer<vtkImageActor>::New();
 
     imageReader = vtkImageReader::New();
+    scaleMagnify=vtkImageMagnify::New();
+    Shrink=vtkImageShrink3D::New();
     imageReader->SetFileDimensionality(2);
     interactorStyleImage = vtkSmartPointer< vtkInteractorStyleImage >::New();
 
@@ -259,7 +273,7 @@ void GuidewareTrackingWindow::initVariable(){
     imageData->SetDimensions(1560, 1440, 1);
     imageData->AllocateScalars(VTK_UNSIGNED_SHORT,1);
 
-    renderWindow->SetSize(1560, 1440);
+    //renderWindow->SetSize(1560, 1440);
 
 }
 
@@ -390,7 +404,7 @@ QString GuidewareTrackingWindow::getCurrentNaviFileName(long long index){
 //!
 QString GuidewareTrackingWindow::getCurrentReconstructFileName(long long index){
     QString fileName;
-    fileName = "REC1" + QString("%1").arg(index, 7, 10, QLatin1Char('0')) + ".raw";
+    fileName = "rec1" + QString("%1").arg(index, 8, 10, QLatin1Char('0')) + ".raw";
     return fileName;
 }
 
@@ -621,6 +635,9 @@ void GuidewareTrackingWindow::constructionIHM(){
     guidewareTrackingDisplayWidget->setFixedSize(width*0.80,height*0.96);
     guidewareTrackingDisplayWidget->setStyleSheet("background-color:58.0/255, 89.0/255, 92.0/255");
     guidewareTrackingDisplayWidget->GetInteractor()->SetInteractorStyle( interactorStyleImage );
+
+    this->ctImageWidth = int(width*0.8);
+    this->ctImageHeight = int (height*0.96);
 
     guidewareTrackingDisplay = new QWidget();
     guidewareTrackingDisplay->setFixedSize(width*0.80,height*0.96);

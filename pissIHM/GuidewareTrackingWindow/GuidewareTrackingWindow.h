@@ -53,6 +53,7 @@
 #include <vtkImageFlip.h>
 #include <vtkActor2D.h>
 #include <vtkImageMagnify.h>
+#include <vtkImageShrink3D.h>
 
 
 /**
@@ -91,6 +92,9 @@ private:
 
 
     vtkImageReader *imageReader;
+    vtkImageMagnify *scaleMagnify;
+    vtkImageShrink3D *Shrink;
+
 
     long long currentNormalIndex;
     long long currentReconstructIndex;
@@ -116,6 +120,10 @@ private:
     int y;
     int width;
     int height;
+
+    int ctImageWidth;
+    int ctImageHeight；
+
     Patient* patientHandling;
     SystemDispatcher* systemDispatcher;
 
