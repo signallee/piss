@@ -76,7 +76,8 @@ public:
 
     QString getCurrentNaviFileName(long long index);
     QString getCurrentReconstructFileName(long long index);
-    vtkActor2D* readRawFile(const QString &file);
+    vtkImageReader* readRawFile(const QString &file);
+    vtkActor2D* adjustImage2Screen(vtkImageReader *imageReader);
 
 
 private:
@@ -122,7 +123,7 @@ private:
     int height;
 
     int ctImageWidth;
-    int ctImageHeight；
+    int ctImageHeight;
 
     Patient* patientHandling;
     SystemDispatcher* systemDispatcher;

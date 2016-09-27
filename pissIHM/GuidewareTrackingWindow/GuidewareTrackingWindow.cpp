@@ -19,7 +19,6 @@ GuidewareTrackingWindow::GuidewareTrackingWindow(QRect rect,
     this->width = rect.width();
     this->height = rect.height();
 
-
     this->systemDispatcher = systemDispatcher;
     this->globalWorkSpaceColor = globalWorkSpaceColor;
     this->configuratonFilePath = configuratonFilePath;
@@ -29,7 +28,6 @@ GuidewareTrackingWindow::GuidewareTrackingWindow(QRect rect,
     this->constructionIHM();
     this->setConnections();
     this->drawBackground();
-
 }
 
 //!----------------------------------------------------------------------------------------------------
@@ -46,7 +44,8 @@ GuidewareTrackingWindow::~GuidewareTrackingWindow(){
 //! \param file
 //! \return
 //!
-vtkActor2D* GuidewareTrackingWindow::readRawFile(const QString &file){
+//vtkActor2D* GuidewareTrackingWindow::readRawFile(const QString &file){
+vtkImageReader *GuidewareTrackingWindow::readRawFile(const QString &file){
 
     imageReader->SetFileName(file.toLocal8Bit().data());
     imageReader->SetNumberOfScalarComponents(1);
@@ -55,17 +54,45 @@ vtkActor2D* GuidewareTrackingWindow::readRawFile(const QString &file){
     imageReader->SetDataScalarTypeToUnsignedShort();
     imageReader->Update();
 
+//    //Magnify
+//    scaleMagnify->SetInputConnection(imageReader->GetOutputPort());
+//    scaleMagnify->SetMagnificationFactors(this->ctImageWidth/100+1,this->ctImageHeight/100+1,1);
+//    //Shrink
+//    Shrink->SetInputConnection(scaleMagnify->GetOutputPort());
+//    Shrink->SetShrinkFactors(1560/100,1440/100,1);
+
+//    mapper->SetInputConnection(Shrink->GetOutputPort());
+
+////    mapper->SetInputData(imageReader->GetOutput());
+//    //mapper->SetRenderToRectangle(0);
+//    mapper->SetColorWindow(20000);
+//    mapper->SetColorLevel(7000);
+
+//    vtkActor2D* actor = vtkActor2D::New();
+//    actor->SetMapper(mapper);
+
+//    //QFile::remove(file);
+
+//    return actor;
+
+    return imageReader;
+}
+
+//!----------------------------------------------------------------------------------------------------
+//!
+//! \brief GuidewareTrackingWindow::adjustImage2Screen
+//! \param input
+//!
+vtkActor2D* GuidewareTrackingWindow::adjustImage2Screen(vtkImageReader *imageReader){
+
     //Magnify
     scaleMagnify->SetInputConnection(imageReader->GetOutputPort());
-    scaleMagnify->SetMagnificationFactors(11,10,1);
+    scaleMagnify->SetMagnificationFactors(this->ctImageWidth/100+1,this->ctImageHeight/100+1,1);
     //Shrink
     Shrink->SetInputConnection(scaleMagnify->GetOutputPort());
-    Shrink->SetShrinkFactors(15,14,1);
+    Shrink->SetShrinkFactors(1560/100,1440/100,1);
 
     mapper->SetInputConnection(Shrink->GetOutputPort());
-
-//    mapper->SetInputData(imageReader->GetOutput());
-    //mapper->SetRenderToRectangle(0);
     mapper->SetColorWindow(20000);
     mapper->SetColorLevel(7000);
 
@@ -75,12 +102,13 @@ vtkActor2D* GuidewareTrackingWindow::readRawFile(const QString &file){
     //QFile::remove(file);
 
     return actor;
+
 }
 
 
 //!----------------------------------------------------------------------------------------------------
 //!
-//! \brief GuidewareTrackingWindow::GuidewireAndVesselMergeDisplay
+//! \brief GuidewareTrackingWindow::displayImage
 //! \param input
 //!
 void GuidewareTrackingWindow::displayImage(vtkActor2D* act){
@@ -110,8 +138,8 @@ void GuidewareTrackingWindow::updateLastFrame(){
 
         if(currentFile.exists())
         {
-
-            vtkActor2D* act = this->readRawFile(currentFilePath);
+            vtkImageReader* readRaw = this->readRawFile(currentFilePath);
+            vtkActor2D* act = this->adjustImage2Screen(readRaw);
             this->displayImage(act);
 
             //copy&remove
@@ -129,8 +157,10 @@ void GuidewareTrackingWindow::updateLastFrame(){
         QFile currentFile(currentFilePath);
         if(currentFile.exists())
         {
-            vtkActor2D* act = this->readRawFile(currentFilePath);
+            vtkImageReader* readRaw = this->readRawFile(currentFilePath);
+            vtkActor2D* act = this->adjustImage2Screen(readRaw);
             this->displayImage(act);
+
             //currentFile.remove(currentFilePath);
 
             currentReconstructIndex++;
