@@ -138,7 +138,6 @@ private:
     QVBoxLayout* secondPatientPhotoWidgetLayout;
     QVBoxLayout* thirdPatientPhotoWidgetLayout;
     QVBoxLayout* fourthPatientPhotoWidgetLayout;
-    QHBoxLayout *surgeryLoadingWidgetLayout;
 
     QWidget* patientsWidgetToolBar;
     QLabel* patientsPhotoWidget;
@@ -170,31 +169,17 @@ private:
     QWidget* leftBlackArea;
     QWidget* rightBlackArea;
     QLabel* patientInfoContainer;
-    QWidget* surgeryLoadingWidget;
 
     PatientItem* firstPatientPhotoWidget;
     PatientItem* secondPatientPhotoWidget;
     PatientItem* thirdPatientPhotoWidget;
     PatientItem* fourthPatientPhotoWidget;
 
-    QProgressBar* surgeryLoadingBar;
 
-    QLabel*surgeryLoadingIndicationLabel;
     QLabel*currentPatientPhoto;
     QVBoxLayout*currentPatientPhotoLayout;
     QLabel*currentPatientInfo;
     QWidget *patientPhotoBlankArea;
-
-
-    PlottingBoard *plottingBoard;
-    QLabel *plottingBoardIndication;
-    QLabel *plottingBoardConfiguration;
-    QHBoxLayout *plottingBoardConfigurationLayout;
-    QLabel* volumeDataAnalyseArea;
-    QVBoxLayout *volumeDataAnalyseAreaLayout;
-
-    QPushButton* plottingButton;
-    QSpacerItem* plottingBoardConfigurationSpacer;
 
     QLabel* nameLabel;
     QLabel* birthdayLabel;
@@ -209,7 +194,6 @@ private:
     QLabel* leadDoctorLabel;
     QLabel* therapyTimeLabel;
 
-    QLabel *curvePlanReformationArea;
     QLabel *flyThroughtArea;
     QVBoxLayout *flyThroughtAreaLayout;
     QLabel *flyThroughtConfigurationBar;
@@ -222,6 +206,11 @@ private:
 
     QLabel *analyseResultDisplayArea;
     QVBoxLayout *analyseResultDisplayAreaLayout;
+
+    QVTKWidget * xySlice;
+    QVTKWidget * yzSlice;
+    QVTKWidget * xzSlice;
+    QLabel * slicingConfigurationBar;
 
     QLineEdit* nameLineEdit;
     QLineEdit* birthdayLineEdit;
@@ -291,7 +280,6 @@ public slots:
     void addPatient();
     void doLeftSelect();
     void doRightSelect();
-    void onPlottingButtonClicked();
     void onGuidewareMovementButtonClicked();
     void onCameraFlyThroughButtonClicked();
     void onClearCenterLineButtonClicked();

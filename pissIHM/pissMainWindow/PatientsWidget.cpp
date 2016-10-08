@@ -51,7 +51,6 @@ void PatientsWidget::setConnections(){
     this->connect(this->addPatientButton,        SIGNAL(clicked()),          this,  SLOT(addPatient()));
     this->connect(this->leftSelectButton,        SIGNAL(clicked()),          this,  SLOT(doLeftSelect()));
     this->connect(this->rightSelectButton,       SIGNAL(clicked()),          this,  SLOT(doRightSelect()));
-    this->connect(this->plottingButton,          SIGNAL(clicked()),          this,  SLOT(onPlottingButtonClicked()));
     this->connect(this->guidewareMovementButton, SIGNAL(clicked()),          this,  SLOT(onGuidewareMovementButtonClicked()));
     this->connect(this->cameraFlyThroughButton,  SIGNAL(clicked()),          this,  SLOT(onCameraFlyThroughButtonClicked()));
     this->connect(this->flyThroughTimer,         SIGNAL(timeout()),          this,  SLOT(flyThrough()));
@@ -65,8 +64,6 @@ void PatientsWidget::setConnections(){
 //! \brief PatientsWidget::launchSurgery
 //!
 void PatientsWidget::launchSurgery(){
-
-
 
     //! fetch the pointer of the patient selected, and then pass it into each component of the system
     Patient *patientHandling = this->dispatcher->getPatientById(waitingPatientsIDQueue[4].toInt(0,10));
@@ -350,16 +347,6 @@ void PatientsWidget::onGuidewareMovementButtonClicked(){
 
 //!----------------------------------------------------------------------------------------------------
 //!
-//! \brief PatientsWidget::onPlottingButtonClicked
-//!
-void PatientsWidget::onPlottingButtonClicked(){
-      QVector<HistogramPoint*> frequencies = this->dispatcher->getHistogramOfVolumeData(this->currentVolumeData);
-      int index = plottingBoard->addCurve("Histogram", "grayscale value", "", "cyan", 3);
-      plottingBoard->doHistogramPlotting(index,frequencies);
-}
-
-//!----------------------------------------------------------------------------------------------------
-//!
 //! \brief PatientsWidget::findPatientExisted
 //!
 void PatientsWidget::findPatientExisted(){
@@ -585,7 +572,7 @@ void PatientsWidget::setWorkSpaceColor(QString workspaceColor){
     this->setStyleSheet("background-color:"+this->workspaceColor);
     this->patientsWidgetToolBar->setStyleSheet("background-color:"+this->workspaceColor);
     this->patientsPhotoWidget->setStyleSheet("background-color:"+this->workspaceColor);
-    this->volumeDataAnalyseArea->setStyleSheet(this->textEditStyleSheet);
+    //this->volumeDataAnalyseArea->setStyleSheet(this->textEditStyleSheet);
     this->patientInfoContainer->setStyleSheet("background-color:"+this->workspaceColor);
 }
 
@@ -964,44 +951,7 @@ void PatientsWidget::constructIHM(){
     this->patientInfoContainerLayout->setSpacing(0);
     this->patientInfoContainerLayout->setMargin(0);
 
-    //!--------------------------------------------------------------------------------------
-    //! area to be modified .. .. . . . . . .  . .
-    //!--------------------------------------------------------------------------------------
 
-    this->plottingBoardIndication = new QLabel();
-    this->plottingBoardIndication->setFixedSize(this->appWidth*0.32, this->appHeight*0.04);
-    this->plottingBoardIndication->setStyleSheet("background:transparent");
-
-    this->plottingBoard = new PlottingBoard();
-    this->plottingBoard->setFixedSize(this->appWidth*0.32, this->appHeight*0.65);
-    this->plottingBoard->setWorkSpaceColor(this->workspaceColor);
-    this->plottingBoard->embellshing();
-
-    this->plottingButton =  new QPushButton();
-    this->plottingButton->setIcon(QIcon(":/images/image_update.png"));
-    this->plottingButton->setIconSize(QSize(this->appWidth*0.015,this->appHeight*0.03));
-    this->plottingButton->setFixedSize(this->appWidth*0.015, this->appHeight*0.03);
-    this->plottingButton->setFlat(true);
-
-    this->plottingBoardConfigurationSpacer = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    this->plottingBoardConfiguration = new QLabel();
-    this->plottingBoardConfiguration->setFixedSize(this->appWidth*0.32, this->appHeight*0.03);
-    this->plottingBoardConfiguration->setStyleSheet("background:transparent");
-    this->plottingBoardConfigurationLayout = new QHBoxLayout(this->plottingBoardConfiguration);
-    this->plottingBoardConfigurationLayout ->addWidget(this->plottingButton);
-    this->plottingBoardConfigurationLayout->addItem(this->plottingBoardConfigurationSpacer);
-    this->plottingBoardConfigurationLayout->setSpacing(0);
-    this->plottingBoardConfigurationLayout->setMargin(0);
-
-    this->volumeDataAnalyseArea = new QLabel();
-    this->volumeDataAnalyseArea->setFixedSize(this->appWidth*0.32, this->appHeight*0.72);
-    this->volumeDataAnalyseAreaLayout = new QVBoxLayout(this->volumeDataAnalyseArea);
-    this->volumeDataAnalyseAreaLayout->addWidget(this->plottingBoardConfiguration);
-    this->volumeDataAnalyseAreaLayout->addWidget(this->plottingBoard);
-    this->volumeDataAnalyseAreaLayout->addWidget(this->plottingBoardIndication);
-    this->volumeDataAnalyseAreaLayout->setSpacing(0);
-    this->volumeDataAnalyseAreaLayout->setMargin(0);
 
     //!--------------------------------------------------------------------------------------
     //! Patient's mri image display area
@@ -1048,14 +998,6 @@ void PatientsWidget::constructIHM(){
     this->patientImageDispalyAreaLayout->setSpacing(0);
     this->patientImageDispalyAreaLayout->setMargin(0);
 
-    //! -----------------------------------------------------------------------------------------------------------------
-    //!
-    //!cpr
-    //!
-    this->curvePlanReformationArea = new QLabel();
-    this->curvePlanReformationArea->setFixedWidth(this->appWidth*0.32);
-    //this->curvePlanReformationArea->setStyleSheet("background:cyan");
-
     //! ------------------------------------------------------------------------------------------------------------------
     //!
     //! fly thourht cam
@@ -1095,11 +1037,32 @@ void PatientsWidget::constructIHM(){
     this->flyThroughtAreaLayout->setSpacing(0);
     this->flyThroughtAreaLayout->setMargin(0);
 
+    //! TODO
+    //! xy, yz, xz slice image
+
+    xySlice = new QVTKWidget();
+    xySlice->setFixedSize(this->appWidth*0.32, this->appHeight*0.32);
+
+    yzSlice = new QVTKWidget();
+    yzSlice->setFixedSize(this->appWidth*0.32, this->appHeight*0.32);
+
+    xzSlice = new QVTKWidget();
+    xzSlice->setFixedSize(this->appWidth*0.32, this->appHeight*0.32);
+
+    slicingConfigurationBar = new QLabel();
+    slicingConfigurationBar->setFixedSize(this->appWidth*0.32, this->appHeight*0.04);
+
+
     analyseResultDisplayArea = new QLabel();
     analyseResultDisplayArea->setFixedWidth(this->appWidth*0.32);
     analyseResultDisplayAreaLayout = new QVBoxLayout(analyseResultDisplayArea);
-    analyseResultDisplayAreaLayout->addWidget(this->curvePlanReformationArea);
-    analyseResultDisplayAreaLayout->addWidget(this->volumeDataAnalyseArea);
+
+    analyseResultDisplayAreaLayout->addWidget(xySlice);
+
+    analyseResultDisplayAreaLayout->addWidget(yzSlice);
+    analyseResultDisplayAreaLayout->addWidget(xzSlice);
+    analyseResultDisplayAreaLayout->addWidget(slicingConfigurationBar);
+
     analyseResultDisplayAreaLayout->setSpacing(0);
     analyseResultDisplayAreaLayout->setMargin(0);
 
@@ -1117,42 +1080,19 @@ void PatientsWidget::constructIHM(){
 
     this->medicalImageAnalyseArea = new QWidget();
     this->medicalImageAnalyseAreaLayout = new QHBoxLayout(medicalImageAnalyseArea);
-    this->medicalImageAnalyseAreaLayout->addWidget(this->patientsWidgetWorkspace);
+    this->medicalImageAnalyseAreaLayout->addWidget(patientsWidgetWorkspace);
     this->medicalImageAnalyseAreaLayout->addWidget(analyseResultDisplayArea);
     this->medicalImageAnalyseAreaLayout->setSpacing(0);
     this->medicalImageAnalyseAreaLayout->setMargin(0);
 
-    //! --------------------------------------------------------------------------------------
-    //! loading bar
-    //! --------------------------------------------------------------------------------------
-    this->surgeryLoadingBar = new QProgressBar();
-    this->surgeryLoadingBar->setStyleSheet("QPrgressBar{background-color:red}"
-                                           "QProgressBar::chunk {background: qlineargradient(x1: 0, y1: 0.5, x2: 1, y2: 0.5, stop: 0 green, stop: 1 white);}");
-    this->surgeryLoadingBar->setFixedSize(this->appWidth*0.4,this->appHeight*0.03);
-    this->surgeryLoadingBar->setMaximum(100);
-    this->surgeryLoadingBar->setMinimum(0);
-
-    this->surgeryLoadingIndicationLabel = new QLabel("status bar");
-    this->surgeryLoadingIndicationLabel->setStyleSheet("background-color:transparent");
-    this->surgeryLoadingIndicationLabel->setFixedSize(this->appWidth*0.28,this->appHeight*0.03);
-
-    this->surgeryLoadingWidget = new QWidget();
-    this->surgeryLoadingWidget->setFixedHeight(this->appHeight*0.03);
-    this->surgeryLoadingWidgetLayout = new QHBoxLayout(this->surgeryLoadingWidget);
-    this->surgeryLoadingWidgetLayout->addWidget(this->surgeryLoadingBar);
-    this->surgeryLoadingWidgetLayout->addWidget(this->surgeryLoadingIndicationLabel);
-    this->surgeryLoadingWidgetLayout->setSpacing(0);
-    this->surgeryLoadingWidgetLayout->setMargin(0);
-
     //!--------------------------------------------------------------------------------------
     //!the layout of patients widget
     //!--------------------------------------------------------------------------------------
-    this->patientsWidgetLayout = new QVBoxLayout(this);
-    this->patientsWidgetLayout->addWidget(this->patientsWidgetToolBar);
-    this->patientsWidgetLayout->addWidget(this->medicalImageAnalyseArea);
-    //this->patientsWidgetLayout->addWidget(this->surgeryLoadingWidget);
-    this->patientsWidgetLayout->setSpacing(0);
-    this->patientsWidgetLayout->setContentsMargins(0,0,0,0);
+    patientsWidgetLayout = new QVBoxLayout(this);
+    patientsWidgetLayout->addWidget(this->patientsWidgetToolBar);
+    patientsWidgetLayout->addWidget(this->medicalImageAnalyseArea);
+    patientsWidgetLayout->setSpacing(0);
+    patientsWidgetLayout->setContentsMargins(0,0,0,0);
 }
 
 //!----------------------------------------------------------------------------------------------------
