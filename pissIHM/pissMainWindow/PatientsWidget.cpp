@@ -1037,7 +1037,7 @@ void PatientsWidget::constructIHM(){
     this->flyThroughtAreaLayout->setSpacing(0);
     this->flyThroughtAreaLayout->setMargin(0);
 
-    //! TODO
+    //!
     //! xy, yz, xz slice image
 
     xySlice = new QVTKWidget();
@@ -1053,18 +1053,18 @@ void PatientsWidget::constructIHM(){
     slicingConfigurationBar->setFixedSize(this->appWidth*0.32, this->appHeight*0.04);
 
 
-    analyseResultDisplayArea = new QLabel();
-    analyseResultDisplayArea->setFixedWidth(this->appWidth*0.32);
-    analyseResultDisplayAreaLayout = new QVBoxLayout(analyseResultDisplayArea);
+    slicingAnalyseArea = new QLabel();
+    slicingAnalyseArea->setFixedWidth(this->appWidth*0.32);
+    slicingAnalyseAreaLayout = new QVBoxLayout(slicingAnalyseArea);
 
-    analyseResultDisplayAreaLayout->addWidget(xySlice);
+    slicingAnalyseAreaLayout->addWidget(xySlice);
 
-    analyseResultDisplayAreaLayout->addWidget(yzSlice);
-    analyseResultDisplayAreaLayout->addWidget(xzSlice);
-    analyseResultDisplayAreaLayout->addWidget(slicingConfigurationBar);
+    slicingAnalyseAreaLayout->addWidget(yzSlice);
+    slicingAnalyseAreaLayout->addWidget(xzSlice);
+    slicingAnalyseAreaLayout->addWidget(slicingConfigurationBar);
 
-    analyseResultDisplayAreaLayout->setSpacing(0);
-    analyseResultDisplayAreaLayout->setMargin(0);
+    slicingAnalyseAreaLayout->setSpacing(0);
+    slicingAnalyseAreaLayout->setMargin(0);
 
     //! --------------------------------------------------------------------------------------
     //! patients widget workspace
@@ -1081,7 +1081,7 @@ void PatientsWidget::constructIHM(){
     this->medicalImageAnalyseArea = new QWidget();
     this->medicalImageAnalyseAreaLayout = new QHBoxLayout(medicalImageAnalyseArea);
     this->medicalImageAnalyseAreaLayout->addWidget(patientsWidgetWorkspace);
-    this->medicalImageAnalyseAreaLayout->addWidget(analyseResultDisplayArea);
+    this->medicalImageAnalyseAreaLayout->addWidget(slicingAnalyseArea);
     this->medicalImageAnalyseAreaLayout->setSpacing(0);
     this->medicalImageAnalyseAreaLayout->setMargin(0);
 

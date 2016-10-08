@@ -204,8 +204,8 @@ private:
     QPushButton *cutButton;
     QSpinBox *cuttingLayerOption;
 
-    QLabel *analyseResultDisplayArea;
-    QVBoxLayout *analyseResultDisplayAreaLayout;
+    QLabel *slicingAnalyseArea;
+    QVBoxLayout *slicingAnalyseAreaLayout;
 
     QVTKWidget * xySlice;
     QVTKWidget * yzSlice;
