@@ -36,6 +36,20 @@
 #include "PlottingBoard.h"
 #include "igsssCutter.h"
 
+//---------------add 3 view--------------------------
+#include "vtkResliceCursorWidget.h"
+#include "vtkCommand.h"
+#include "vtkResliceCursorLineRepresentation.h"
+#include "vtkResliceCursorActor.h"
+#include "vtkResliceCursorPolyDataAlgorithm.h"
+#include "vtkPlaneSource.h"
+
+#include "vtkResliceImageViewer.h"
+#include "vtkDistanceWidget.h"
+#include "vtkResliceImageViewerMeasurements.h"
+#include "vtkCellPicker.h"
+//---------------add 3 view--------------------------
+
 
 /**
  * @brief The PatientsWidget class
@@ -204,8 +218,8 @@ private:
     QPushButton *cutButton;
     QSpinBox *cuttingLayerOption;
 
-    QLabel *slicingAnalyseArea;
-    QVBoxLayout *slicingAnalyseAreaLayout;
+    QLabel *analyseResultDisplayArea;
+    QVBoxLayout *analyseResultDisplayAreaLayout;
 
     QVTKWidget * xySlice;
     QVTKWidget * yzSlice;
@@ -269,6 +283,20 @@ private:
     QString photoLabelStyleSheet;
     QString textEditStyleSheet;
     QTime* surgeryTimer;
+
+//---------------add 3 view--------------------------
+    QVTKWidget *viewXY;
+    QVTKWidget *viewYZ;
+    QVTKWidget *viewXZ;
+//    QVTKWidget *viewVolume;
+    QLabel *threeViewArea;
+    QGridLayout *threeViewAreaLayout;
+
+    vtkSmartPointer< vtkResliceImageViewer > riw[3];
+    vtkSmartPointer< vtkImagePlaneWidget > planeWidget[3];
+    vtkSmartPointer< vtkDistanceWidget > DistanceWidget[3];
+    vtkSmartPointer< vtkResliceImageViewerMeasurements > ResliceMeasurements;
+//---------------add 3 view--------------------------
 
 signals:
     void surgeryLaunchButtonCicked();
