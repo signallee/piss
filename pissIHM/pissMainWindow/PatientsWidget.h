@@ -35,20 +35,7 @@
 #include "vtkColorTransferFunction.h"
 #include "PlottingBoard.h"
 #include "igsssCutter.h"
-
-//---------------add 3 view--------------------------
-#include "vtkResliceCursorWidget.h"
-#include "vtkCommand.h"
-#include "vtkResliceCursorLineRepresentation.h"
-#include "vtkResliceCursorActor.h"
-#include "vtkResliceCursorPolyDataAlgorithm.h"
-#include "vtkPlaneSource.h"
-
-#include "vtkResliceImageViewer.h"
-#include "vtkDistanceWidget.h"
-#include "vtkResliceImageViewerMeasurements.h"
-#include "vtkCellPicker.h"
-//---------------add 3 view--------------------------
+#include "vtkResliceCursorCallback.h"
 
 
 /**
