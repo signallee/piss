@@ -119,10 +119,10 @@ void PatientsWidget::initVariable(){
     this->volumeProperty->SetScalarOpacity(compositeOpacity); // composite first.
 
     vtkSmartPointer<vtkColorTransferFunction> color = vtkSmartPointer<vtkColorTransferFunction>::New();
-    color->AddRGBPoint(0.0,    0.0,0.0,1.0);
+    color->AddRGBPoint(0.0,     0.0,0.0,1.0);
     color->AddRGBPoint(1200.0,  1.0,0.0,0.0);
-    color->AddRGBPoint(1600.0, 1.0,1.0,1.0);
-    color->AddRGBPoint(2400.0, 1.0,1.0,1.0);
+    color->AddRGBPoint(1600.0,  1.0,1.0,1.0);
+    color->AddRGBPoint(2400.0,  1.0,1.0,1.0);
     this->volumeProperty->SetColor(color);
 
     this->setFocusPolicy(Qt::StrongFocus);
@@ -154,6 +154,11 @@ void PatientsWidget::initVariable(){
     for (int i = 0; i < 3; i++){
       riw[i] = vtkSmartPointer< vtkResliceImageViewer >::New();
     }
+
+    picker = vtkSmartPointer<vtkCellPicker>::New();
+    picker->SetTolerance(0.005);
+
+    ipwProp = vtkSmartPointer<vtkProperty>::New();
 
 }
 
@@ -590,6 +595,7 @@ void PatientsWidget::display(vtkImageData *imgToBeDisplayed){
 
     this->currentVolumeData = imgToBeDisplayed;
 
+    //! remove
     originVolumeDataRenderer->RemoveAllViewProps();
 
     //! generate shift scale volume data
@@ -615,22 +621,13 @@ void PatientsWidget::display(vtkImageData *imgToBeDisplayed){
     this->originVolumeDataRenderer->ResetCamera();
     this->renderWindow->Render();
 
-
+    //! TODO to be verified...
     int imageDims[3];
     currentVolumeData->GetDimensions(imageDims);
 
-    this->xySlice->SetRenderWindow(riw[0]->GetRenderWindow());
-    riw[0]->SetupInteractor(this->xySlice->GetRenderWindow()->GetInteractor());
-
-    this->yzSlice->SetRenderWindow(riw[1]->GetRenderWindow());
-    riw[1]->SetupInteractor(this->yzSlice->GetRenderWindow()->GetInteractor());
-
-    this->xzSlice->SetRenderWindow(riw[2]->GetRenderWindow());
-    riw[2]->SetupInteractor(this->xzSlice->GetRenderWindow()->GetInteractor());
-
     for (int i = 0; i < 3; i++){
       // make them all share the same reslice cursor object.
-      vtkResliceCursorLineRepresentation *rep =vtkResliceCursorLineRepresentation::SafeDownCast(riw[i]->GetResliceCursorWidget()->GetRepresentation());
+      vtkResliceCursorLineRepresentation *rep = vtkResliceCursorLineRepresentation::SafeDownCast(riw[i]->GetResliceCursorWidget()->GetRepresentation());
       riw[i]->SetResliceCursor(riw[0]->GetResliceCursor());
 
       rep->GetResliceCursorActor()->GetCursorAlgorithm()->SetReslicePlaneNormal(i);
@@ -640,17 +637,12 @@ void PatientsWidget::display(vtkImageData *imgToBeDisplayed){
       riw[i]->SetResliceModeToAxisAligned();
     }
 
-    vtkSmartPointer<vtkCellPicker> picker = vtkSmartPointer<vtkCellPicker>::New();
-    picker->SetTolerance(0.005);
+    vtkRenderWindowInteractor *currentPatientVolumeDataAnalyseAreaInteractor = this->currentPatientVolumeDataAnalyseArea->GetInteractor();
 
-    vtkSmartPointer<vtkProperty> ipwProp = vtkSmartPointer<vtkProperty>::New();
-
-    //this->currentPatientVolumeDataAnalyseArea->GetRenderWindow()->AddRenderer(originVolumeDataRenderer);
-    vtkRenderWindowInteractor *iren = this->currentPatientVolumeDataAnalyseArea->GetInteractor();
-
+    vtkSmartPointer< vtkImagePlaneWidget > planeWidget[3];
     for (int i = 0; i < 3; i++){
       planeWidget[i] = vtkSmartPointer<vtkImagePlaneWidget>::New();
-      planeWidget[i]->SetInteractor( iren );
+      planeWidget[i]->SetInteractor(currentPatientVolumeDataAnalyseAreaInteractor);
       planeWidget[i]->SetPicker(picker);
       planeWidget[i]->RestrictPlaneToVolumeOn();
       double color[3] = {0, 0, 0};
@@ -1132,6 +1124,16 @@ void PatientsWidget::constructIHM(){
     xzSlice = new QVTKWidget();
     xzSlice->setFixedSize(this->appWidth*0.32, this->appHeight*0.32);
 
+    //! TODO naming...
+    this->xySlice->SetRenderWindow(riw[0]->GetRenderWindow());
+    this->riw[0]->SetupInteractor(this->xySlice->GetRenderWindow()->GetInteractor());
+
+    this->yzSlice->SetRenderWindow(riw[1]->GetRenderWindow());
+    this->riw[1]->SetupInteractor(this->yzSlice->GetRenderWindow()->GetInteractor());
+
+    this->xzSlice->SetRenderWindow(riw[2]->GetRenderWindow());
+    this->riw[2]->SetupInteractor(this->xzSlice->GetRenderWindow()->GetInteractor());
+
     slicingConfigurationBar = new QLabel();
     slicingConfigurationBar->setFixedSize(this->appWidth*0.32, this->appHeight*0.04);
 
@@ -1203,8 +1205,6 @@ void PatientsWidget::addPatientToWidget(QString path){
             break;
      }
  }
-
-
 
  //!----------------------------------------------------------------------------------------------------
  //!

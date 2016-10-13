@@ -280,9 +280,11 @@ private:
     QGridLayout *threeViewAreaLayout;
 
     vtkSmartPointer< vtkResliceImageViewer > riw[3];
-    vtkSmartPointer< vtkImagePlaneWidget > planeWidget[3];
+
     vtkSmartPointer< vtkDistanceWidget > DistanceWidget[3];
     vtkSmartPointer< vtkResliceImageViewerMeasurements > ResliceMeasurements;
+    vtkSmartPointer<vtkCellPicker> picker;
+    vtkSmartPointer<vtkProperty> ipwProp;
 //---------------add 3 view--------------------------
 
 signals:
