@@ -109,7 +109,7 @@ void ControlConsoleWindow::setConnections(){
 //!
 void ControlConsoleWindow::onMissionAccomplishimentButtonClicked(){
     if (!(QMessageBox::information(this,tr("Igss Surgery"),tr("Do you really want to terminate the surgery?"),tr("Yes"),tr("No")))){
-        qDebug()<<"onMissionAccomplishimentButtonClicked";
+        //qDebug()<<"onMissionAccomplishimentButtonClicked";
         // turn off the configuration file
         emit missionAccomplishiment();
     }

@@ -82,6 +82,9 @@ public:
 
 private:
 
+    int ct_image_width;
+    int ct_image_height;
+
     vtkSmartPointer<vtkRenderer> renderer;
     vtkSmartPointer<vtkRenderWindow> renderWindow;
     vtkSmartPointer<vtkRenderer> mainRenderer;

@@ -10,6 +10,16 @@ QStringList SystemDispatcher::getPatientsStatus(){
 
 //!---------------------------------------------------------------------------------------------------------
 //!
+//! \brief SystemDispatcher::extractBrainCortextFrom
+//! \param input
+//! \param output
+//!
+vtkImageData* SystemDispatcher::extractBrainCortextFrom(vtkImageData *input){
+    return this->imageProcessingFactory->extractBrainCortextFrom(input);
+}
+
+//!---------------------------------------------------------------------------------------------------------
+//!
 //! \brief SystemDispatcher::getHistogramOfVolumeData
 //! \param img
 //! \param points
@@ -109,7 +119,7 @@ void SystemDispatcher::initializeSystemPaths(){
         #endif
     }
     else{
-        qDebug()<<"exception";
+        //qDebug()<<"exception";
         return;
     }
 

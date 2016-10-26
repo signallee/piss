@@ -16,7 +16,7 @@ CenterLineReader::~CenterLineReader()
 //! \param centerlineFilePath
 //!
 int CenterLineReader::doReadCenterLineFile(QString centerlineFilePath, vtkPoints *vessel){
-    qDebug()<<"doReadCenterLineFile"<<centerlineFilePath;
+    //qDebug()<<"doReadCenterLineFile"<<centerlineFilePath;
     QFile file(centerlineFilePath);
     if(!file.open(QIODevice::ReadOnly|QIODevice::Text)){
         qDebug()<<"sorry,can't open the file!"<<endl;
@@ -118,8 +118,8 @@ void CenterLineReader::doReadCenterlineFolder(QString centerlineFolderPath){
             pointscount++;
         }
     }
-    qDebug()<<"The total reference files:"<<dir.count();
-    qDebug()<<"The total centerline points:"<<pointscount<<vesselsPoints.size()<<vesselsPoints.length();
+    //qDebug()<<"The total reference files:"<<dir.count();
+    //qDebug()<<"The total centerline points:"<<pointscount<<vesselsPoints.size()<<vesselsPoints.length();
 }
 
 

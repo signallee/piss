@@ -1,5 +1,12 @@
 #include "ImageProcessingFactory.h"
 
+
+/**
+ * @brief ImageProcessingFactory::ImageProcessingFactory
+ *
+ * @description
+ *
+ */
 ImageProcessingFactory::ImageProcessingFactory()
 {
     this->vesselEnhancementFilter = new VesselEnhancementFilter();
@@ -7,6 +14,19 @@ ImageProcessingFactory::ImageProcessingFactory()
     this->igssVtkImageConverter = new IgssVtkImageConverter();
 }
 
+//! ----------------------------------------------------------------------------------------------------------------------------------
+//!
+//! \brief ImageProcessingFactory::extractBrainCortextFrom
+//! \param input
+//! \return
+//!
+vtkImageData* ImageProcessingFactory::extractBrainCortextFrom(vtkImageData *input){
+    vtkImageData *ret;
+
+    return ret;
+}
+
+//! ----------------------------------------------------------------------------------------------------------------------------------
 //!
 //! \brief ImageProcessingFactory::doProcessingByCommand
 //! \param input
@@ -25,6 +45,7 @@ eProcessingErrorCode ImageProcessingFactory::doProcessingByCommand(IgssImage *in
     return ret;
 }
 
+//! ----------------------------------------------------------------------------------------------------------------------------------
 //!
 //! \brief ImageProcessingFactory::getIgssVtkImageConverter
 //! \return
@@ -33,6 +54,7 @@ IgssVtkImageConverter *ImageProcessingFactory::getIgssVtkImageConverter(){
     return this->igssVtkImageConverter;
 }
 
+//! ----------------------------------------------------------------------------------------------------------------------------------
 //!
 //! \brief ImageProcessingFactory::getGeneralInformationAnalyser
 //! \return
@@ -41,6 +63,7 @@ GeneralInformationAnalyser* ImageProcessingFactory::getGeneralInformationAnalyse
     return this->generalInformationAnalyser;
 }
 
+//! ----------------------------------------------------------------------------------------------------------------------------------
 //!
 //! \brief ImageProcessingFactory::getTotlaNumber
 //! \param mraImage
@@ -50,6 +73,7 @@ long ImageProcessingFactory::getTotlaNumber(vtkImageData* mraImage){
     return this->generalInformationAnalyser->getTotalGrayscaleValueNumber(mraImage);
 }
 
+//! ----------------------------------------------------------------------------------------------------------------------------------
 //!
 //! \brief ImageProcessingFactory::getMean
 //! \param mraImage
@@ -59,6 +83,7 @@ double ImageProcessingFactory::getMean(vtkImageData* mraImage){
     return this->generalInformationAnalyser->getGrayscaleValueMean(mraImage);
 }
 
+//! ----------------------------------------------------------------------------------------------------------------------------------
 //!
 //! \brief ImageProcessingFactory::getHistogramFrom
 //! \param mraImage
@@ -68,6 +93,7 @@ QVector<HistogramPoint*> ImageProcessingFactory::getHistogramFrom(vtkImageData* 
     return this->getGeneralInformationAnalyser()->extractFrequency(mraImage);
 }
 
+//! ----------------------------------------------------------------------------------------------------------------------------------
 //!
 //! \brief ImageProcessingFactory::getHistogramStatisticsFrom
 //! \param mraImage

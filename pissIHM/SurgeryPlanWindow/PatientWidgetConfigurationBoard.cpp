@@ -27,10 +27,10 @@ PatientWidgetConfigurationBoard::~PatientWidgetConfigurationBoard(){}
 //! \brief PatientWidgetConfigurationBoard::printButtonStates
 //!
 void PatientWidgetConfigurationBoard::printButtonStates(){
-    qDebug()<<segmentationButtonStates.thresholdSegementationState;
-    qDebug()<<segmentationButtonStates.adaptiveRegionGrowingSegementationState;
-    qDebug()<<segmentationButtonStates.boostSegementationState;
-    qDebug()<<segmentationButtonStates.cropVesselSegementationState;
+//    qDebug()<<segmentationButtonStates.thresholdSegementationState;
+//    qDebug()<<segmentationButtonStates.adaptiveRegionGrowingSegementationState;
+//    qDebug()<<segmentationButtonStates.boostSegementationState;
+//    qDebug()<<segmentationButtonStates.cropVesselSegementationState;
 }
 
 

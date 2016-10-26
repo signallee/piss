@@ -73,7 +73,7 @@ void pissMainWindow::initVariable(){
     this->surgeryTimer = new QTime();
 
 
-    this->configuratonFilePath = "C:\\Users\\cheng\\Documents\\CanalyserWorkspace\\CanalyserMetadata\\configuration.txt";
+    this->configuratonFilePath = "C:\\Users\\vincent\\Documents\\CanalyserWorkspace\\CanalyserMetadata\\configuration.txt";
 
     //!----------------------------------------------------------------------------------------------------
     //! three humain-machine interface while therapy, gauche:

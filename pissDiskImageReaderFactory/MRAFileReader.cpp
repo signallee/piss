@@ -33,7 +33,7 @@ void MRAFileReader::setReadCompleteFlag(bool flag){
 //!
 bool MRAFileReader::doParseMHDFileToVtkImage(const QString &mhdFilePath, vtkImageData*image){
     //reader->SetFileName(mhdFilePath.toLocal8Bit().data());
-    reader->SetFileName("/home/cheng/Documents/CanalyserWorkspace/PatientsDataware/Zeng_Xianjia__1990_09_03/mra_tridimensionel__image/Zeng_Xianjia.mhd");
+    reader->SetFileName("/home/vincent/Documents/CanalyserWorkspace/PatientsDataware/Zeng_Xianjia__1990_09_03/mra_tridimensionel__image/Zeng_Xianjia.mhd");
     reader->Update();
     image = reader->GetOutput();
     return true;

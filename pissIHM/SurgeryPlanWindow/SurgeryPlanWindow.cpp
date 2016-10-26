@@ -196,17 +196,34 @@ void SurgeryPlanWindow::display(vtkImageData *imgToBeDisplayed){
     //!---------------------------------------------------------------
     //! volume data visualization
     //!---------------------------------------------------------------
+    //!MarchingCube test
+    this->MC=vtkSmartPointer<vtkMarchingCubes>::New();
+    this->MC->SetInputData(imgToBeDisplayed);
+    this->MC->SetValue(0,437);//437 test datanum
+
+    this->stripperfilter=vtkSmartPointer<vtkStripper>::New();
+    this->stripperfilter->SetInputConnection(this->MC->GetOutputPort());
+
+    this->MC_mapper=vtkSmartPointer<vtkPolyDataMapper>::New();
+    this->MC_mapper->SetInputConnection(this->stripperfilter->GetOutputPort());
+
+    this->MC_actor=vtkSmartPointer<vtkActor>::New();
+    this->MC_actor->SetMapper(this->MC_mapper);
+    this->MC_actor->GetProperty()->SetColor(0,0,0);
+
     this->volumeMapper->SetInputData(imgToBeDisplayed);
     this->volumeMapper->SetBlendModeToMaximumIntensity();
     this->volume->SetMapper(volumeMapper) ;
     this->volume->SetProperty(volumeProperty);
 
     this->mainRenderer->AddVolume(volume);
+    //this->mainRenderer->AddActor(this->MC_actor);
     //.....this->renderer->SetBackground(58.0/255, 89.0/255, 92.0/255);
 
     this->renderWindow->AddRenderer(mainRenderer);
 
     this->patientMRAImage->SetRenderWindow(renderWindow);
+
 
     QString humaBodyDataPath = this->systemDispatcher->getImageCenterPath()+"human_body.obj";
     vtkSmartPointer<vtkOBJReader> reader = vtkSmartPointer<vtkOBJReader>::New();
@@ -312,8 +329,8 @@ void SurgeryPlanWindow::loadVesselAction(){
 //!
 void SurgeryPlanWindow::doVesselReconstruct(){
     QVector<CenterLinePoint*> vesselPoints = patientHandling->getVesselByName(vesselHandlingName);
-    qDebug()<<"doVesselReconstruct"<<vesselPoints;
-    qDebug()<<vesselHandlingName<<vesselPoints.size()<<vesselPoints.length();
+    //qDebug()<<"doVesselReconstruct"<<vesselPoints;
+    //qDebug()<<vesselHandlingName<<vesselPoints.size()<<vesselPoints.length();
 
     int cpt;
     for(cpt = 0; cpt<vesselPoints.size(); cpt++){
@@ -430,7 +447,7 @@ void SurgeryPlanWindow::updateCoords(vtkObject* obj){
   // update label
   QString str;
   str.sprintf("x=%d : y=%d", event_pos[0], event_pos[1]);
-  qDebug()<<str;
+  //qDebug()<<str;
   //coord->setText(str);
 }
 
@@ -463,22 +480,43 @@ void SurgeryPlanWindow::initialRendering(){
     int interval = max - min;
 
     //! doit etre calibrer selons les differentes valeurs maximaux
-    this->opacityTransferChoice->setChecked(true);
-    this->generateNewOpacityPoint(min ,               0.0);
+//    this->opacityTransferChoice->setChecked(true);
+//    this->generateNewOpacityPoint(min ,               0.0);
 
-    this->generateNewOpacityPoint(900, 0.0);
-    this->generateNewOpacityPoint(1700, 1.8);
+//    this->generateNewOpacityPoint(900, 0.0);
+//    this->generateNewOpacityPoint(1700, 1.8);
+//    this->generateNewOpacityPoint(max,                1.8);
+
+//    this->colorTransferChoice->setChecked(true);
+//    this->generateInitColorPoints(min,                4);
+//    this->generateInitColorPoints(max,                4);
+
+    this->opacityTransferChoice->setChecked(true);
+
+//    this->generateNewOpacityPoint(0 ,               0);
+//    this->generateNewOpacityPoint(150 ,               0);
+//    this->generateNewOpacityPoint(250 ,               1);
+//    this->generateNewOpacityPoint(550 ,               1.5);
+//    this->generateNewOpacityPoint(1000 ,               1.9);
+
+    this->generateNewOpacityPoint(min ,               0.0);
+    this->generateNewOpacityPoint(min + 0.3*interval, 0.0);
+    this->generateNewOpacityPoint(min + 0.5*interval, 1);
+    this->generateNewOpacityPoint(min + 0.7*interval, 1.8);
     this->generateNewOpacityPoint(max,                1.8);
 
     this->colorTransferChoice->setChecked(true);
-    this->generateInitColorPoints(min,                4);
-    this->generateInitColorPoints(max,                4);
+//    this->generateInitColorPoints(0,               255, 255, 255 );
+//    this->generateInitColorPoints(150,               255, 255, 255 );
+//    this->generateInitColorPoints(250,               255, 215, 0 );
+//    this->generateInitColorPoints(550,                255, 20, 147);
+//    this->generateInitColorPoints(1000,                255,190,190);
 
-    /*this->generateInitColorPoints(min,                4);
+    this->generateInitColorPoints(min,                4);
     this->generateInitColorPoints(min + 0.3*interval, 1);
     this->generateInitColorPoints(min + 0.5*interval, 2);
     this->generateInitColorPoints(min + 0.7*interval, 3);
-    this->generateInitColorPoints(max,                4);*/
+    this->generateInitColorPoints(max,                4);
 
     this->gradientTransferChoice->setChecked(true);
     this->generateNewGradientPoint(min,                2.0);
@@ -824,13 +862,37 @@ void SurgeryPlanWindow::generateNewGradientPoint(double abscissa, double ordinat
 //! \param color
 //!
 void SurgeryPlanWindow::generateInitColorPoints(double abscissa, int colorCount){
-    QColor *color =  new QColor(255, 255, 255);
-    //QColor *color =  new QColor(255, colorCount*51, 0);
+
+    QColor *color =  new QColor(255, colorCount*51, 0);
     ColorPoint *colorPoint = new ColorPoint();
     colorPoint->setAbscissaValue(abscissa);
     colorPoint->setBlueValue(1.0*color->blue()/255);
     colorPoint->setRedValue(1.0*color->red()/255);
     colorPoint->setGreenValue(1.0*color->green()/255);
+
+    this->patientHandling->setColorTransferPoint(colorPoint);
+    if(transferOptionStates.colorTransferOptionChoosen){
+        this->transformationPlottingBoard->doColorTransformationPlotting(this->patientHandling->getColorTransferPoints());
+    }
+   this->updatePatientMRAImage();
+}
+
+//--------------------------------------------------------------------------------------------------------------------------------
+//!
+//! \brief SurgeryPlanWindow::generateInitColorPoints
+//! \param abscissa
+//! \param red
+//! \param green
+//! \param blue
+//!
+void SurgeryPlanWindow::generateInitColorPoints(double abscissa, int red, int green, int blue){
+    QColor *color =  new QColor(red, green, blue);
+    ColorPoint *colorPoint = new ColorPoint();
+    colorPoint->setAbscissaValue(abscissa);
+    colorPoint->setBlueValue(1.0*color->blue()/255);
+    colorPoint->setRedValue(1.0*color->red()/255);
+    colorPoint->setGreenValue(1.0*color->green()/255);
+
     this->patientHandling->setColorTransferPoint(colorPoint);
     if(transferOptionStates.colorTransferOptionChoosen){
         this->transformationPlottingBoard->doColorTransformationPlotting(this->patientHandling->getColorTransferPoints());
@@ -1696,7 +1758,15 @@ void SurgeryPlanWindow::transparentBrainOptionReleased(){
     imageOptionStates.whiteMatterOptionState = false;
     imageOptionStates.vesselOptionState = false;
     imageOptionStates.interventionalRouteOptionState = false;
+
+    qDebug()<<"extractBrainCortextFrom";
+    vtkImageData *currentVolumeData = this->systemDispatcher->extractBrainCortextFrom(this->patientHandling->getMraImageToBeDisplayed());
+
+
+
 }
+
+
 
 //--------------------------------------------------------------------------------------------------------------------------------
 //!
@@ -1840,7 +1910,7 @@ void SurgeryPlanWindow::vesselOptionClicked(){
     vesselOption->setStyleSheet( "border: 1px solid lightgrey;  border-radius: 0px; background-color: transparent;  min-width: 0px; color: lightcyan  "  );
 }
 
-#include <QThread>
+
 //--------------------------------------------------------------------------------------------------------------------------------
 //!
 //! \brief SurgeryPlanWindow::vesselOptionReleased
@@ -1870,7 +1940,7 @@ void SurgeryPlanWindow::vesselOptionReleased(){
 
 
 void SurgeryPlanWindow::getVesselEnhancedImage(){
-    qDebug()<<enhancedImage->GetDataDimension();
+    //qDebug()<<enhancedImage->GetDataDimension();
 }
 
 

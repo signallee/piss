@@ -29,6 +29,10 @@
 #include <QAction>
 #include <QCursor>
 #include <QColor>
+//ADD MC
+#include<vtkMarchingCubes.h>
+#include<vtkStripper.h>
+#include<vtkPolyDataMapper.h>
 
 #include <vtkAutoInit.h>
 VTK_MODULE_INIT(vtkRenderingVolumeOpenGL);
@@ -90,6 +94,7 @@ VTK_MODULE_INIT(vtkRenderingVolumeOpenGL);
 #include <vtkProperty.h>
 #include <vtkDoubleArray.h>
 
+
 struct TransferOptionStates{
     bool opacityTransferOptionChoosen = false;
     bool colorTransferOptionChoosen = false;
@@ -110,6 +115,7 @@ struct ImageOptionStates{
     bool vesselOptionState;
     bool interventionalRouteOptionState;
 };
+
 
 /**
  * @brief The SurgeryPlanWindow class
@@ -167,6 +173,9 @@ public:
     void generateNewColorPoints(double abscissa, double ordinate);
     void generateNewGradientPoint(double abscissa, double ordinate);
     void generateInitColorPoints(double abscissa, int colorCount);
+    void generateInitColorPoints(double abscissa, int red, int green, int blue);
+
+
     void initialRendering();
     void opacityPointTracking();
     void colorPointTracking();
@@ -331,6 +340,12 @@ private:
     vtkPoints *points;
 
     vtkFixedPointVolumeRayCastMapper *volumeMapper;
+
+    //ADD MC
+    vtkSmartPointer<vtkMarchingCubes> MC;
+    vtkSmartPointer<vtkStripper> stripperfilter;
+    vtkSmartPointer<vtkPolyDataMapper> MC_mapper;
+    vtkSmartPointer<vtkActor> MC_actor;
 
     vtkVolume *volume;
     vtkSmartPointer<vtkRenderWindow> renderWindow;

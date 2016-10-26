@@ -46,34 +46,13 @@ GuidewareTrackingWindow::~GuidewareTrackingWindow(){
 //!
 //vtkActor2D* GuidewareTrackingWindow::readRawFile(const QString &file){
 vtkImageReader *GuidewareTrackingWindow::readRawFile(const QString &file){
-
+    //qDebug()<<file;
     imageReader->SetFileName(file.toLocal8Bit().data());
     imageReader->SetNumberOfScalarComponents(1);
-    imageReader->SetDataExtent(0, 1559, 0, 1439, 0, 0);
-    imageReader->SetDataByteOrderToLittleEndian();
+    imageReader->SetDataExtent(0, ct_image_width-1, 0, ct_image_height-1, 0, 0);
+    imageReader->SetDataByteOrderToBigEndian();
     imageReader->SetDataScalarTypeToUnsignedShort();
     imageReader->Update();
-
-//    //Magnify
-//    scaleMagnify->SetInputConnection(imageReader->GetOutputPort());
-//    scaleMagnify->SetMagnificationFactors(this->ctImageWidth/100+1,this->ctImageHeight/100+1,1);
-//    //Shrink
-//    Shrink->SetInputConnection(scaleMagnify->GetOutputPort());
-//    Shrink->SetShrinkFactors(1560/100,1440/100,1);
-
-//    mapper->SetInputConnection(Shrink->GetOutputPort());
-
-////    mapper->SetInputData(imageReader->GetOutput());
-//    //mapper->SetRenderToRectangle(0);
-//    mapper->SetColorWindow(20000);
-//    mapper->SetColorLevel(7000);
-
-//    vtkActor2D* actor = vtkActor2D::New();
-//    actor->SetMapper(mapper);
-
-//    //QFile::remove(file);
-
-//    return actor;
 
     return imageReader;
 }
@@ -90,11 +69,11 @@ vtkActor2D* GuidewareTrackingWindow::adjustImage2Screen(vtkImageReader *imageRea
     scaleMagnify->SetMagnificationFactors(this->ctImageWidth/100+1,this->ctImageHeight/100+1,1);
     //Shrink
     Shrink->SetInputConnection(scaleMagnify->GetOutputPort());
-    Shrink->SetShrinkFactors(1560/100,1440/100,1);
+    Shrink->SetShrinkFactors(ct_image_width/100,ct_image_height/100,1);
 
     mapper->SetInputConnection(Shrink->GetOutputPort());
-    mapper->SetColorWindow(20000);
-    mapper->SetColorLevel(7000);
+    mapper->SetColorWindow(5000);
+    //mapper->SetColorLevel(4000);
 
     vtkActor2D* actor = vtkActor2D::New();
     actor->SetMapper(mapper);
@@ -105,7 +84,6 @@ vtkActor2D* GuidewareTrackingWindow::adjustImage2Screen(vtkImageReader *imageRea
 
 }
 
-
 //!----------------------------------------------------------------------------------------------------
 //!
 //! \brief GuidewareTrackingWindow::displayImage
@@ -114,14 +92,10 @@ vtkActor2D* GuidewareTrackingWindow::adjustImage2Screen(vtkImageReader *imageRea
 void GuidewareTrackingWindow::displayImage(vtkActor2D* act){
     mainRenderer->RemoveAllViewProps();
     mainRenderer->AddActor2D(act);
-    //renderWindow->SetSize(1541, 1352);
 
     this->renderWindow->AddRenderer(mainRenderer);
 
     this->guidewareTrackingDisplayWidget->SetRenderWindow(renderWindow);
-
-    //this->mainRenderer->ResetCamera();
-    //this->renderWindow->Render();
     this->guidewareTrackingDisplayWidget->update();
 }
 
@@ -153,7 +127,6 @@ void GuidewareTrackingWindow::updateLastFrame(){
 
         currentFilePath = currentWorkDir.absolutePath() + "\\reconstruct\\" + this->getCurrentReconstructFileName(currentReconstructIndex);
         currentFilePath.replace("/", "\\");
-        //qDebug()<<currentFilePath;
         QFile currentFile(currentFilePath);
         if(currentFile.exists())
         {
@@ -277,7 +250,7 @@ void GuidewareTrackingWindow::initVariable(){
 
     this->currentNormalIndex = 0;
     this->currentReconstructIndex = 0;
-    this->currentWorkDir = "C:\\Users\\cheng\\Documents\\CanalyserWorkspace\\PatientsDataware\\Meng_Xianshen__1990_09_03\\bidimensionel__images\\";
+    this->currentWorkDir = "C:\\Users\\vincent\\Documents\\CanalyserWorkspace\\PatientsDataware\\Xv_Hs__1990_09_03\\bidimensionel__images\\";
     this->collaborativeType = "standby";
 
     renderer = vtkSmartPointer<vtkRenderer>::New();
@@ -296,14 +269,19 @@ void GuidewareTrackingWindow::initVariable(){
 
     //camera = vtkSmartPointer<vtkCamera>::New();
 
+
+//    ct_image_width = 1560;
+//    ct_image_height = 1440;
+
+    ct_image_width = 1024;
+    ct_image_height = 1024;
+
     mainRenderer->SetBackground(112.0/255, 128.0/255, 144.0/255);
 
     imageData = vtkSmartPointer<vtkImageData>::New();
     // Specify the size of the image data
-    imageData->SetDimensions(1560, 1440, 1);
+    imageData->SetDimensions(ct_image_width, ct_image_height, 1);
     imageData->AllocateScalars(VTK_UNSIGNED_SHORT,1);
-
-    //renderWindow->SetSize(1560, 1440);
 
 }
 
@@ -434,7 +412,7 @@ QString GuidewareTrackingWindow::getCurrentNaviFileName(long long index){
 //!
 QString GuidewareTrackingWindow::getCurrentReconstructFileName(long long index){
     QString fileName;
-    fileName = "rec1" + QString("%1").arg(index, 8, 10, QLatin1Char('0')) + ".raw";
+    fileName = "1" + QString("%1").arg(index, 4, 10, QLatin1Char('0')) + ".raw";
     return fileName;
 }
 

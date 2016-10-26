@@ -23,6 +23,8 @@ public:
 
     IgssVtkImageConverter *getIgssVtkImageConverter();
 
+    vtkImageData* extractBrainCortextFrom(vtkImageData *input);
+
 private:
     VesselEnhancementFilter *vesselEnhancementFilter;
     GeneralInformationAnalyser* generalInformationAnalyser;

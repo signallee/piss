@@ -12,7 +12,7 @@ IgssVtkImageConverter::IgssVtkImageConverter(){
 //! \brief IgssVtkImageConverter::IgssToVtk
 //! \param input
 //! \param output
-//! \author du chencheng 2015.09.09
+//! \author du chen\cheng 2015.09.09
 //!
 void IgssVtkImageConverter::IgssToVtk(IgssImage* input, vtkSmartPointer<vtkImageData> output){
 
@@ -40,7 +40,7 @@ void IgssVtkImageConverter::IgssToVtk(IgssImage* input, vtkSmartPointer<vtkImage
         //*ptr++ = input->getValueByIndex(index);
         output_array->SetComponent(index, 0, input->getValueByIndex(index));
     }
-    qDebug()<<"IgssToVtk"<<numvoxels<<indims[0]<<indims[1]<<indims[2];
+    //qDebug()<<"IgssToVtk"<<numvoxels<<indims[0]<<indims[1]<<indims[2];
 }
 
 //!--------------------------------------------------------------------------------------

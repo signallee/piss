@@ -330,7 +330,7 @@ void PatientsWidget::onCameraFlyThroughButtonClicked(){
 
     flyThroughMode = true;
     if(vesselPointCount == 0){
-        vesselPointCount = centerLineReader.doReadCenterLineFile("C:\\Users\\cheng\\Documents\\CanalyserWorkspace\\PatientsDataware\\Chen_Ritian__1986_02_02\\mra_tridimensionel__image\\centerlines\\reference0.txt", vessel);
+        vesselPointCount = centerLineReader.doReadCenterLineFile("C:\\Users\\vincent\\Documents\\CanalyserWorkspace\\PatientsDataware\\Chen_Ritian__1986_02_02\\mra_tridimensionel__image\\centerlines\\reference0.txt", vessel);
         this->cuttingLayerOption->setMinimum(0);
         this->cuttingLayerOption->setMaximum(vesselPointCount-1);
     }
@@ -348,7 +348,7 @@ void PatientsWidget::onGuidewareMovementButtonClicked(){
     flyThroughMode = false;
 
     if(vesselPointCount == 0){
-        vesselPointCount = centerLineReader.doReadCenterLineFile("C:\\Users\\cheng\\Documents\\CanalyserWorkspace\\PatientsDataware\\Chen_Ritian__1986_02_02\\mra_tridimensionel__image\\centerlines\\reference0.txt", vessel);
+        vesselPointCount = centerLineReader.doReadCenterLineFile("C:\\Users\\vincent\\Documents\\CanalyserWorkspace\\PatientsDataware\\Chen_Ritian__1986_02_02\\mra_tridimensionel__image\\centerlines\\reference0.txt", vessel);
         this->cuttingLayerOption->setMinimum(0);
         this->cuttingLayerOption->setMaximum(vesselPointCount-1);
     }
@@ -575,7 +575,7 @@ void PatientsWidget::setWorkSpaceColor(QString workspaceColor){
     workspaceRed = qworkspaceColor->red();
     workspaceGreen = qworkspaceColor->green();
     workspaceBlue = qworkspaceColor->blue();
-    qDebug()<<workspaceRed<<workspaceGreen<<workspaceBlue;
+    //qDebug()<<workspaceRed<<workspaceGreen<<workspaceBlue;
     this->originVolumeDataRenderer->SetBackground((1.0*workspaceRed)/255, (1.0*workspaceGreen)/255, (1.0*workspaceBlue)/255);
     this->flyThroughRenderer->SetBackground((1.0*workspaceRed)/255, (1.0*workspaceGreen)/255, (1.0*workspaceBlue)/255);
 
