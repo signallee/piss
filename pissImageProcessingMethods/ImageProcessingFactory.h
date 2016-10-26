@@ -3,10 +3,55 @@
 #include "VesselEnhancementFilter.h"
 #include "ErrorMessage.h"
 #include <GeneralInformationAnalyser.h>
-#include <vtkImageData.h>
 #include <QVector>
+
+#include "vtkSmartPointer.h"
+#include "vtkImageData.h"
+
 #include <HistogramPoint.h>
 #include "IgssVtkImageConverter.h"
+#include "itkImageToVTKImageFilter.h"
+#include "itkVTKImageToImageFilter.h"
+#include<itkConfidenceConnectedImageFilter.h>
+#include<itkCurvatureFlowImageFilter.h>
+#include<itkCastImageFilter.h>
+#include<vtkImageMask.h>
+#include<itkImageFileReader.h>
+#include<itkImageFileWriter.h>
+#include<itkMetaImageIO.h>
+#include<itkBinaryBallStructuringElement.h>
+#include <vtkImageCast.h>
+#include "vtkMetaImageWriter.h"
+
+#include <QByteArray>
+
+
+const unsigned int Dimension=3;
+typedef float InternalPixelType;
+typedef itk::Image<InternalPixelType,Dimension> InternalImageType;
+
+typedef unsigned char BinartPixelType;
+typedef itk::Image<BinartPixelType,Dimension> BinaryputImageType;
+
+ typedef  itk::ImageFileWriter<  BinaryputImageType  > WriterType;
+
+typedef itk::BinaryBallStructuringElement<BinartPixelType,Dimension> StructuringElementType;
+
+typedef signed short OutputPixelType;
+typedef itk::Image<OutputPixelType,Dimension> OutputImageType;
+
+typedef itk::CurvatureFlowImageFilter< InternalImageType, InternalImageType > CurvatureFlowImageFilterType;
+
+typedef itk::ConfidenceConnectedImageFilter<InternalImageType,InternalImageType> connnectedFilterType;
+
+
+typedef  itk::VTKImageToImageFilter<OutputImageType> VTK2ITKFilterType;
+typedef  itk::ImageToVTKImageFilter<BinaryputImageType> ITK2VTKFilterType;
+
+typedef itk::CastImageFilter< InternalImageType, BinaryputImageType > CastingFilterType1;
+typedef itk::CastImageFilter< OutputImageType, InternalImageType > CastingFilterType2;
+
+
 
 class ImageProcessingFactory
 {
@@ -23,7 +68,7 @@ public:
 
     IgssVtkImageConverter *getIgssVtkImageConverter();
 
-    vtkImageData* extractBrainCortextFrom(vtkImageData *input);
+    bool extractBrainCortextFrom(vtkImageData *input, QString path);
 
 private:
     VesselEnhancementFilter *vesselEnhancementFilter;

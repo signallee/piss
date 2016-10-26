@@ -1733,11 +1733,16 @@ void SurgeryPlanWindow::transparentBrainOptionClicked(){
     transparentBrainOption->setStyleSheet( "border: 1px solid lightgrey;  border-radius: 0px; background-color: transparent;  min-width: 0px; color: lightCyan  "  );
 }
 
+
+
 //--------------------------------------------------------------------------------------------------------------------------------
 //!
 //! \brief SurgeryPlanWindow::transparentBrainOptionReleased
 //!
 void SurgeryPlanWindow::transparentBrainOptionReleased(){
+
+    this->mainRenderer->RemoveAllViewProps();
+
     originalOption->setStyleSheet( "border: 1px solid lightgrey;  border-radius: 0px; background-color: transparent;  min-width: 0px; color: lightgrey  "  );
     transparentBrainOption->setStyleSheet( "border: 1px solid lightgrey;  border-radius: 0px; background-color: lightgrey;  min-width: 0px; color: lightCyan  "  );
     greyMatterOption->setStyleSheet( "border: 1px solid lightgrey;  border-radius: 0px; background-color: transparent;  min-width: 0px; color: lightgrey  "  );
@@ -1759,10 +1764,38 @@ void SurgeryPlanWindow::transparentBrainOptionReleased(){
     imageOptionStates.vesselOptionState = false;
     imageOptionStates.interventionalRouteOptionState = false;
 
-    qDebug()<<"extractBrainCortextFrom";
-    vtkImageData *currentVolumeData = this->systemDispatcher->extractBrainCortextFrom(this->patientHandling->getMraImageToBeDisplayed());
+    qDebug()<<"start extractBrainCortextFrom";
 
+    QString target = this->patientHandling->getTridimensionelPath()+"brain_cortex.mha";
 
+    if(this->systemDispatcher->extractBrainCortextFrom(this->patientHandling->getMraImageToBeDisplayed(),target)){
+        vtkSmartPointer<vtkMetaImageReader> reader = vtkSmartPointer<vtkMetaImageReader>::New();
+        reader->SetFileName(target.toLatin1().data());
+        reader->Update();
+
+        this->MC=vtkSmartPointer<vtkMarchingCubes>::New();
+        this->MC->SetInputData(reader->GetOutput());
+        this->MC->SetValue(0, 255);//437 test datanum
+
+        this->stripperfilter=vtkSmartPointer<vtkStripper>::New();
+        this->stripperfilter->SetInputConnection(this->MC->GetOutputPort());
+
+        this->MC_mapper=vtkSmartPointer<vtkPolyDataMapper>::New();
+        this->MC_mapper->SetScalarVisibility(0);
+        this->MC_mapper->SetInputConnection(this->stripperfilter->GetOutputPort());
+
+        this->MC_actor=vtkSmartPointer<vtkActor>::New();
+        this->MC_actor->SetMapper(this->MC_mapper);
+        this->MC_actor->GetProperty()->SetColor(240.0/255,248.0/255,255.0/255);
+
+        double *rgb = this->MC_actor->GetProperty()->GetColor();
+        qDebug()<<rgb[0]<<rgb[1]<<rgb[2];
+        this->mainRenderer->AddActor(this->MC_actor);
+
+        this->mainRenderer->ResetCamera();
+        this->renderWindow->Render();
+        this->patientMRAImage->update();
+    }
 
 }
 

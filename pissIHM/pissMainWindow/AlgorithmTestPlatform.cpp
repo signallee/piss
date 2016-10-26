@@ -105,7 +105,8 @@ unsigned long long AlgorithmTestPlatform::FileTimeToInt64(const FILETIME & ft){
 //!
 float AlgorithmTestPlatform::GetCPULoad(){
     FILETIME idleTime, kernelTime, userTime;
-    return GetSystemTimes(&idleTime, &kernelTime, &userTime) ? CalculateCPULoad(FileTimeToInt64(idleTime), FileTimeToInt64(kernelTime) + FileTimeToInt64(userTime)) : -1.0f;
+    //return GetSystemTimes(&idleTime, &kernelTime, &userTime) ? CalculateCPULoad(FileTimeToInt64(idleTime), FileTimeToInt64(kernelTime) + FileTimeToInt64(userTime)) : -1.0f;
+    return 0.0;
 }
 
 //! ------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -93,6 +93,7 @@ VTK_MODULE_INIT(vtkRenderingVolumeOpenGL);
 #include <vtkCellArray.h>
 #include <vtkProperty.h>
 #include <vtkDoubleArray.h>
+#include "vtkMetaImageWriter.h"
 
 
 struct TransferOptionStates{

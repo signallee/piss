@@ -629,6 +629,15 @@ QString Patient::getPhotoPath(){
 
 //!------------------------------------------------------------------------------
 //!
+//! \brief Patient::getTridimensionelPath
+//! \return
+//!
+QString Patient::getTridimensionelPath(){
+    return this->myPath + "/mra_tridimensionel__image/";
+}
+
+//!------------------------------------------------------------------------------
+//!
 //! \brief getMraTridimensionelPath
 //! \return
 //!

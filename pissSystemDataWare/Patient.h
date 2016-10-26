@@ -53,6 +53,7 @@ public:
     QString getSex();
     QString getPhotoPath();
     QString getMraTridimensionelPath();
+    QString getTridimensionelPath();
     IgssImage *getOriginImage();
     vtkImageData *getMraImageToBeDisplayed();
     void setImageProcessingFactory(ImageProcessingFactory* imageProcessingFactory);
