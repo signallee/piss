@@ -10,7 +10,6 @@ public:
     void setOrdinate(double _ord);
     void setIsometric(double _iso);
 
-
     double getAbscissa();
     double getOrdinate();
     double getIsometric();

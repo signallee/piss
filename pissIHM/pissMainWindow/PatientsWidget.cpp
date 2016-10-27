@@ -1142,7 +1142,6 @@ void PatientsWidget::constructIHM(){
     analyseResultDisplayAreaLayout = new QVBoxLayout(analyseResultDisplayArea);
 
     analyseResultDisplayAreaLayout->addWidget(xySlice);
-
     analyseResultDisplayAreaLayout->addWidget(yzSlice);
     analyseResultDisplayAreaLayout->addWidget(xzSlice);
     analyseResultDisplayAreaLayout->addWidget(slicingConfigurationBar);

@@ -142,7 +142,7 @@ void pissMainWindow::constructIHM(){
                                               this->surgeryTimer,
                                               this->englishCaracterStyle,
                                               this->primary_screen_width*0.985,
-                                              this->primary_screen_height*0.79,
+                                              this->primary_screen_height*0.87,
                                               this->globalWorkSpaceColor,
                                               this->globalFontColor);
 
@@ -157,7 +157,7 @@ void pissMainWindow::constructIHM(){
     //! surveillance sur les etats du system
     //!----------------------------------------------------------------------------------------------------------------------------
     surgerySystemWidget = new SurgerySystemWidget(this->primary_screen_width*0.985,
-                                                  this->primary_screen_height*0.79,
+                                                  this->primary_screen_height*0.87,
                                                   this->systemDispatcher,
                                                   this->algorithmTestPlatform,
                                                   this->globalWorkSpaceColor);
@@ -171,7 +171,7 @@ void pissMainWindow::constructIHM(){
     widgetsContainer->setFont(QFont("Segoe UI", 11, QFont::AnyStyle, true));
 
     widgetsContainer->setStyleSheet(the_tab_style);
-    widgetsContainer->setFixedHeight(primary_screen_height*0.82);
+    widgetsContainer->setFixedHeight(primary_screen_height*0.9);
     widgetsContainer->insertTab(0,patientsWidget, "patient");
     widgetsContainer->insertTab(1,surgerySystemWidget, "system");
     widgetsContainer->insertTab(2,replaysWidget, "documentation");

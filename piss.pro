@@ -132,7 +132,8 @@ SOURCES +=  main.cpp\
             pissConnectionFactory/DatagramPackage/HelloMessage.cpp \
             pissImageProcessingMethods/igssCurvePlanReformationLib/igsssCutter.cpp \
             pissConnectionFactory/DatagramPackage/HandShakeMessage.cpp \
-    pissIHM/pissMainWindow/vtkResliceCursorCallback.cpp
+    pissIHM/pissMainWindow/vtkResliceCursorCallback.cpp \
+    pissImageProcessingMethods/igssGeneralLib/SeedPoint.cpp
 
 HEADERS  += \
             pissDispatcher/SystemDispatcher.h \
@@ -211,7 +212,8 @@ HEADERS  += \
             pissConnectionFactory/DatagramPackage/HelloMessage.h \
             pissImageProcessingMethods/igssCurvePlanReformationLib/igsssCutter.h \
             pissConnectionFactory/DatagramPackage/HandShakeMessage.h \
-    pissIHM/pissMainWindow/vtkResliceCursorCallback.h
+    pissIHM/pissMainWindow/vtkResliceCursorCallback.h \
+    pissImageProcessingMethods/igssGeneralLib/SeedPoint.h
 
 
 

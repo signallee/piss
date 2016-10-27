@@ -94,7 +94,11 @@ VTK_MODULE_INIT(vtkRenderingVolumeOpenGL);
 #include <vtkProperty.h>
 #include <vtkDoubleArray.h>
 #include "vtkMetaImageWriter.h"
-
+#include "vtkDecimatePro.h"
+#include "vtkSmoothPolyDataFilter.h"
+#include "vtkPolyDataNormals.h"
+#include"vtkPolyDataMapper.h"
+#include "vtkImageDataToPointSet.h"
 
 struct TransferOptionStates{
     bool opacityTransferOptionChoosen = false;
@@ -344,6 +348,9 @@ private:
 
     //ADD MC
     vtkSmartPointer<vtkMarchingCubes> MC;
+    vtkSmartPointer<vtkDecimatePro> deci;
+    vtkSmartPointer<vtkSmoothPolyDataFilter> smooth;
+    vtkSmartPointer<vtkPolyDataNormals> normals;
     vtkSmartPointer<vtkStripper> stripperfilter;
     vtkSmartPointer<vtkPolyDataMapper> MC_mapper;
     vtkSmartPointer<vtkActor> MC_actor;

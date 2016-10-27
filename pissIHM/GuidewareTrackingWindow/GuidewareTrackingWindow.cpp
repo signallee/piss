@@ -72,7 +72,7 @@ vtkActor2D* GuidewareTrackingWindow::adjustImage2Screen(vtkImageReader *imageRea
     Shrink->SetShrinkFactors(ct_image_width/100,ct_image_height/100,1);
 
     mapper->SetInputConnection(Shrink->GetOutputPort());
-    mapper->SetColorWindow(5000);
+    mapper->SetColorWindow(800);
     //mapper->SetColorLevel(4000);
 
     vtkActor2D* actor = vtkActor2D::New();
@@ -106,7 +106,7 @@ void GuidewareTrackingWindow::displayImage(vtkActor2D* act){
 void GuidewareTrackingWindow::updateLastFrame(){
     //qDebug()<<"updateLastFrame"<<collaborativeType;
     if(collaborativeType == "navi"){
-        currentFilePath = currentWorkDir.absolutePath() + "\\navi\\" + this->getCurrentNaviFileName(currentNormalIndex);
+        currentFilePath = this->patientHandling->getCTImagePath() + "\\navi\\" + this->getCurrentNaviFileName(currentNormalIndex);
         currentFilePath.replace("/", "\\");
         QFile currentFile(currentFilePath);
 
@@ -125,7 +125,7 @@ void GuidewareTrackingWindow::updateLastFrame(){
     }
     else if(collaborativeType == "reconstruct"){
 
-        currentFilePath = currentWorkDir.absolutePath() + "\\reconstruct\\" + this->getCurrentReconstructFileName(currentReconstructIndex);
+        currentFilePath = this->patientHandling->getCTImagePath() + "\\reconstruct\\" + this->getCurrentReconstructFileName(currentReconstructIndex);
         currentFilePath.replace("/", "\\");
         QFile currentFile(currentFilePath);
         if(currentFile.exists())
@@ -250,7 +250,7 @@ void GuidewareTrackingWindow::initVariable(){
 
     this->currentNormalIndex = 0;
     this->currentReconstructIndex = 0;
-    this->currentWorkDir = "C:\\Users\\vincent\\Documents\\CanalyserWorkspace\\PatientsDataware\\Xv_Hs__1990_09_03\\bidimensionel__images\\";
+
     this->collaborativeType = "standby";
 
     renderer = vtkSmartPointer<vtkRenderer>::New();

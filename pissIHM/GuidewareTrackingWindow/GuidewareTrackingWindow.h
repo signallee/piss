@@ -102,7 +102,6 @@ private:
 
     long long currentNormalIndex;
     long long currentReconstructIndex;
-    QDir currentWorkDir;
 
     QString collaborativeState;
     QString collaborativeName;
