@@ -1908,7 +1908,6 @@ void SurgeryPlanWindow::whiteMatterOptionReleased(){
         this->smooth->BoundarySmoothingOn();
 
         this->normals= vtkSmartPointer<vtkPolyDataNormals>::New();
-
         this->normals->SetInputConnection(smooth->GetOutputPort());
         this->normals->FlipNormalsOn();
 
@@ -1918,6 +1917,7 @@ void SurgeryPlanWindow::whiteMatterOptionReleased(){
         this->MC_mapper=vtkSmartPointer<vtkPolyDataMapper>::New();
         this->MC_mapper->SetScalarVisibility(0);
         this->MC_mapper->SetInputConnection(this->normals->GetOutputPort());
+        //this->MC_mapper->SetInputConnection(this->stripperfilter->GetOutputPort());
 
         this->MC_actor=vtkSmartPointer<vtkActor>::New();
         this->MC_actor->SetMapper(this->MC_mapper);

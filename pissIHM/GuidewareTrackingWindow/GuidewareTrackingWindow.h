@@ -90,7 +90,6 @@ private:
     vtkSmartPointer<vtkRenderer> mainRenderer;
     vtkSmartPointer<vtkImageActor> ctImageActor;
     //vtkSmartPointer<vtkCamera> camera;
-    vtkSmartPointer<vtkImageData> imageData;
     vtkSmartPointer<vtkInteractorStyleImage > interactorStyleImage;
     vtkSmartPointer<vtkImageMapper> mapper;
 

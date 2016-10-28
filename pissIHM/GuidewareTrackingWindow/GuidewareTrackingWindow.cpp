@@ -50,7 +50,7 @@ vtkImageReader *GuidewareTrackingWindow::readRawFile(const QString &file){
     imageReader->SetFileName(file.toLocal8Bit().data());
     imageReader->SetNumberOfScalarComponents(1);
     imageReader->SetDataExtent(0, ct_image_width-1, 0, ct_image_height-1, 0, 0);
-    imageReader->SetDataByteOrderToBigEndian();
+    imageReader->SetDataByteOrderToLittleEndian();
     imageReader->SetDataScalarTypeToUnsignedShort();
     imageReader->Update();
 
@@ -72,8 +72,8 @@ vtkActor2D* GuidewareTrackingWindow::adjustImage2Screen(vtkImageReader *imageRea
     Shrink->SetShrinkFactors(ct_image_width/100,ct_image_height/100,1);
 
     mapper->SetInputConnection(Shrink->GetOutputPort());
-    mapper->SetColorWindow(800);
-    //mapper->SetColorLevel(4000);
+    mapper->SetColorWindow((1024+141)/2);
+    mapper->SetColorLevel((1024-141)/2);
 
     vtkActor2D* actor = vtkActor2D::New();
     actor->SetMapper(mapper);
@@ -278,11 +278,6 @@ void GuidewareTrackingWindow::initVariable(){
 
     mainRenderer->SetBackground(112.0/255, 128.0/255, 144.0/255);
 
-    imageData = vtkSmartPointer<vtkImageData>::New();
-    // Specify the size of the image data
-    imageData->SetDimensions(ct_image_width, ct_image_height, 1);
-    imageData->AllocateScalars(VTK_UNSIGNED_SHORT,1);
-
 }
 
 //!----------------------------------------------------------------------------------------------------
@@ -412,7 +407,7 @@ QString GuidewareTrackingWindow::getCurrentNaviFileName(long long index){
 //!
 QString GuidewareTrackingWindow::getCurrentReconstructFileName(long long index){
     QString fileName;
-    fileName = "1" + QString("%1").arg(index, 4, 10, QLatin1Char('0')) + ".raw";
+    fileName = "REC1" + QString("%1").arg(index, 7, 10, QLatin1Char('0')) + ".raw";
     return fileName;
 }
 

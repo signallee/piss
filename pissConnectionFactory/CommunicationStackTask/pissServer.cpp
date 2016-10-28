@@ -67,7 +67,7 @@ bool pissServer::launchServer(){
         msgBox.exec();
         return false;
     }
-    qDebug()<<this->devices->getMyListenPort();
+
     serverStatus = this->listen(QHostAddress::Any, this->devices->getMyListenPort());
     return serverStatus;
 }

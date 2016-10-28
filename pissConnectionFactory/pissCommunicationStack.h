@@ -21,7 +21,6 @@ class pissCommunicationStack:public QObject
     Q_OBJECT
 
 public:
-
     void initComponents();
     void initRealTimeTasks();
     void setConnections();
@@ -31,6 +30,7 @@ public:
     bool closeServer();
     void clearBuffer();
     void setDatabase(SystemDataBase* database);
+
     Device* getLocalDevice();
 
 private:
