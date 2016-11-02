@@ -14,8 +14,8 @@ QStringList SystemDispatcher::getPatientsStatus(){
 //! \param input
 //! \param output
 //!
-bool SystemDispatcher::extractBrainCortextFrom(vtkImageData *input, QString path){
-    return this->imageProcessingFactory->extractBrainCortextFrom(input, path);
+bool SystemDispatcher::extractBrainCortextFrom(vtkImageData *input, QString type, QString path){
+    return this->imageProcessingFactory->extractBrainCortextFrom(input, type, path);
 }
 
 //!---------------------------------------------------------------------------------------------------------

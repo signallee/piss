@@ -33,6 +33,7 @@
 #include<vtkMarchingCubes.h>
 #include<vtkStripper.h>
 #include<vtkPolyDataMapper.h>
+#include<vtkPolyDataWriter.h>
 
 #include <vtkAutoInit.h>
 VTK_MODULE_INIT(vtkRenderingVolumeOpenGL);
@@ -222,7 +223,7 @@ private:
 
     QTime* surgeryTime;
 
-    QTimer *timer;
+    QTimer *timerToWaittingReconstructedResult;
 
     AlgorithmTestPlatform *algorithmTestPlatform;
 
@@ -347,6 +348,7 @@ private:
     vtkFixedPointVolumeRayCastMapper *volumeMapper;
 
     //ADD MC
+    vtkSmartPointer<vtkMetaImageReader> reader;
     vtkSmartPointer<vtkMarchingCubes> MC;
     vtkSmartPointer<vtkDecimatePro> deci;
     vtkSmartPointer<vtkSmoothPolyDataFilter> smooth;
@@ -493,7 +495,7 @@ public slots:
     void displayImageAnalyseArea();
     void closeSurgeryPlanWindow();
 
-    void showTime();
+    void toFindReconstructedResult();
     void showContextMenu(const QPoint &pos);
     void loadVesselAction();
     void unloadVesselAction();

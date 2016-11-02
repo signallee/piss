@@ -68,7 +68,7 @@ public:
 
     IgssVtkImageConverter *getIgssVtkImageConverter();
 
-    bool extractBrainCortextFrom(vtkImageData *input, QString path);
+    bool extractBrainCortextFrom(vtkImageData *input, QString type, QString path);
 
 private:
     VesselEnhancementFilter *vesselEnhancementFilter;

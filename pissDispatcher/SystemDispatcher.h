@@ -27,7 +27,7 @@ public:
     QStringList getPatientsStatus();
     QString doImageProcessingByMethodType(int id, int dim, QString method);
 
-    bool extractBrainCortextFrom(vtkImageData *input, QString path);
+    bool extractBrainCortextFrom(vtkImageData *input, QString type, QString path);
 
     QVector<HistogramPoint*> getHistogramOfVolumeData(vtkImageData *img);
 

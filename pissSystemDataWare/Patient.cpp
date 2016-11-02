@@ -90,6 +90,7 @@ bool Patient::doReadReconstructedResult(){
     if((checkMHDFile.exists() && checkMHDFile.isFile()) ){
 
         mraImagefilePath = myPath + "/bidimensionel__images/reconstruct/result.mhd";
+        qDebug()<<mraImagefilePath;
         loadMRAImageFile(mraImagefilePath);
 
         statisticsList =imageProcessingFactory->getHistogramStatisticsFrom(MriImageForDisplay);
