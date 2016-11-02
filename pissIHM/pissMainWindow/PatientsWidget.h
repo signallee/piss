@@ -36,7 +36,7 @@
 #include "PlottingBoard.h"
 #include "igsssCutter.h"
 #include "vtkResliceCursorCallback.h"
-
+#include "vtkResliceCursor.h"
 
 /**
  * @brief The PatientsWidget class
@@ -81,6 +81,8 @@ public:
 
     int testX();
     int testY();
+
+    void ResetViews();
 
 private:
 
@@ -208,11 +210,6 @@ private:
     QLabel *analyseResultDisplayArea;
     QVBoxLayout *analyseResultDisplayAreaLayout;
 
-    QVTKWidget * xySlice;
-    QVTKWidget * yzSlice;
-    QVTKWidget * xzSlice;
-    QLabel * slicingConfigurationBar;
-
     QLineEdit* nameLineEdit;
     QLineEdit* birthdayLineEdit;
     QLineEdit* sexualLineEdit;
@@ -272,11 +269,10 @@ private:
     QTime* surgeryTimer;
 
 //---------------add 3 view--------------------------
-    QVTKWidget *viewXY;
-    QVTKWidget *viewYZ;
-    QVTKWidget *viewXZ;
-//    QVTKWidget *viewVolume;
-    QLabel *threeViewArea;
+    QVTKWidget * xySlice;
+    QVTKWidget * yzSlice;
+    QVTKWidget * xzSlice;
+    QLabel * slicingConfigurationBar;
     QGridLayout *threeViewAreaLayout;
 
     vtkSmartPointer< vtkResliceImageViewer > riw[3];
@@ -285,6 +281,7 @@ private:
     vtkSmartPointer< vtkResliceImageViewerMeasurements > ResliceMeasurements;
     vtkSmartPointer<vtkCellPicker> picker;
     vtkSmartPointer<vtkProperty> ipwProp;
+    vtkSmartPointer< vtkImagePlaneWidget > planeWidget[3];
 //---------------add 3 view--------------------------
 
 signals:

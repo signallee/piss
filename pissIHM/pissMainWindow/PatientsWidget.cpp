@@ -639,7 +639,7 @@ void PatientsWidget::display(vtkImageData *imgToBeDisplayed){
 
     vtkRenderWindowInteractor *currentPatientVolumeDataAnalyseAreaInteractor = this->currentPatientVolumeDataAnalyseArea->GetInteractor();
 
-    vtkSmartPointer< vtkImagePlaneWidget > planeWidget[3];
+//    vtkSmartPointer< vtkImagePlaneWidget > planeWidget[3];
     for (int i = 0; i < 3; i++){
       planeWidget[i] = vtkSmartPointer<vtkImagePlaneWidget>::New();
       planeWidget[i]->SetInteractor(currentPatientVolumeDataAnalyseAreaInteractor);
@@ -683,7 +683,48 @@ void PatientsWidget::display(vtkImageData *imgToBeDisplayed){
 
     }
 
+
+    this->ResetViews();
+
 }
+
+//! --------------------------------------------------------------------------------------------------------
+//!
+//! \brief PatientsWidget::ResetViews
+//! \param none
+//!
+void PatientsWidget::ResetViews()
+{
+  // Reset the reslice image views
+  for (int i = 0; i < 3; i++)
+    {
+    riw[i]->Reset();
+    riw[i]->GetRenderer()->ResetCamera();
+    }
+
+  // Also sync the Image plane widget on the 3D top right view with any
+  // changes to the reslice cursor.
+  for (int i = 0; i < 3; i++)
+    {
+    vtkPlaneSource *ps = static_cast< vtkPlaneSource * >(
+        planeWidget[i]->GetPolyDataAlgorithm());
+    ps->SetNormal(riw[0]->GetResliceCursor()->GetPlane(i)->GetNormal());
+    ps->SetCenter(riw[0]->GetResliceCursor()->GetPlane(i)->GetOrigin());
+
+    // If the reslice plane has modified, update it on the 3D widget
+    this->planeWidget[i]->UpdatePlacement();
+    }
+
+  // Render in response to changes.
+  for (int i = 0; i < 3; i++)
+    {
+    riw[i]->Render();
+    }
+  xzSlice->GetRenderWindow()->Render();
+  riw[2]->GetRenderer()->ResetCamera();
+
+}
+
 
 //! --------------------------------------------------------------------------------------------------------
 //!
