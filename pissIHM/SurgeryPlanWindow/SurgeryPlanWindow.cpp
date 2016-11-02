@@ -1123,16 +1123,11 @@ void SurgeryPlanWindow::initialisation(){
     vReconstructActor = vtkActor::New();
 
 
-    this->reader = vtkSmartPointer<vtkMetaImageReader>::New();
-    this->MC=vtkSmartPointer<vtkMarchingCubes>::New();
-    this->deci=vtkSmartPointer<vtkDecimatePro>::New();
-    this->smooth=vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
-    this->normals= vtkSmartPointer<vtkPolyDataNormals>::New();
-    this->MC_mapper=vtkSmartPointer<vtkPolyDataMapper>::New();
-    this->MC_actor=vtkSmartPointer<vtkActor>::New();
-
-
     displayImageAnalyseAreaButtonClicked = false;
+
+    this->grayMatterActor = NULL;
+    this->whiteMatterActor = NULL;
+    this->vesselActor = NULL;
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------
@@ -1688,6 +1683,49 @@ void SurgeryPlanWindow::createRandomVtkImageData(){
 
 //!--------------------------------------------------------------------------------------------------------------------------------
 //!
+//! \brief SurgeryPlanWindow::generatePolyDataActor
+//! \param path
+//! \return
+//!
+vtkSmartPointer<vtkActor> SurgeryPlanWindow::generatePolyDataActorFromMetaFile(QString path, int r, int g, int b){
+    vtkSmartPointer<vtkMetaImageReader> reader = vtkSmartPointer<vtkMetaImageReader>::New();
+    vtkSmartPointer<vtkMarchingCubes> MC = vtkSmartPointer<vtkMarchingCubes>::New();
+    vtkSmartPointer<vtkDecimatePro> deci = vtkSmartPointer<vtkDecimatePro>::New();
+    vtkSmartPointer<vtkSmoothPolyDataFilter> smooth = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
+    vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
+    vtkSmartPointer<vtkPolyDataMapper> MC_mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    vtkSmartPointer<vtkActor> MC_actor = vtkSmartPointer<vtkActor>::New();
+
+    reader->SetFileName(path.toLatin1().data());
+    reader->Update();
+
+    MC->SetInputData(reader->GetOutput());
+    MC->SetValue(0, 1);
+
+    deci->SetInputConnection(MC->GetOutputPort());
+    deci->SetTargetReduction(0.9);
+    deci->PreserveTopologyOn();
+
+    smooth->SetInputConnection(deci->GetOutputPort());
+    smooth->SetNumberOfIterations(1000);
+    smooth->BoundarySmoothingOn();
+
+    normals->SetInputConnection(smooth->GetOutputPort());
+    normals->FlipNormalsOn();
+
+    MC_mapper->SetScalarVisibility(0);
+    MC_mapper->SetInputConnection(normals->GetOutputPort());
+
+    MC_actor->SetMapper(MC_mapper);
+    MC_actor->GetProperty()->SetColor(r*1.0/255,g*1.0/255,b*1.0/255);
+    MC_actor->GetProperty()->SetRepresentationToSurface();
+
+    return MC_actor;
+
+}
+
+//!--------------------------------------------------------------------------------------------------------------------------------
+//!
 //! \brief SurgeryPlanWindow::originalOptionHovered
 //!
 void SurgeryPlanWindow::originalOptionHovered(){
@@ -1791,6 +1829,29 @@ void SurgeryPlanWindow::transparentBrainOptionReleased(){
 
     qDebug()<<"start extractBrainCortextFrom";
 
+    if(this->grayMatterActor == NULL){
+        QString gmPath = this->patientHandling->getTridimensionelPath() + this->patientHandling->getLastName() + "__" +this->patientHandling->getFirstName() + "_gray_matter.mha";
+        this->grayMatterActor = generatePolyDataActorFromMetaFile(gmPath, 105, 105, 105);
+    }
+
+    if(this->whiteMatterActor == NULL){
+        QString wmPath = this->patientHandling->getTridimensionelPath() + this->patientHandling->getLastName() + "__" +this->patientHandling->getFirstName() + "_white_matter.mha";
+        this->whiteMatterActor = generatePolyDataActorFromMetaFile(wmPath, 255, 255, 255);
+    }
+
+    if(this->vesselActor == NULL){
+        QString vesselPath = this->patientHandling->getTridimensionelPath() + this->patientHandling->getLastName() + "__" +this->patientHandling->getFirstName() + "_vessel.mha";
+        this->vesselActor = generatePolyDataActorFromMetaFile(vesselPath, 204, 0, 0);
+    }
+
+    this->mainRenderer->AddActor(this->grayMatterActor);
+    this->mainRenderer->AddActor(this->whiteMatterActor);
+    this->mainRenderer->AddActor(this->vesselActor);
+
+    this->mainRenderer->ResetCamera();
+    this->renderWindow->Render();
+    this->patientMRAImage->update();
+
 }
 
 //!--------------------------------------------------------------------------------------------------------------------------------
@@ -1853,56 +1914,24 @@ void SurgeryPlanWindow::greyMatterOptionReleased(){
     imageOptionStates.interventionalRouteOptionState = false;
 
     qDebug()<<"start extractBrainCortext gray matter";
-    QString target = this->patientHandling->getTridimensionelPath() + this->patientHandling->getLastName() + "__" +this->patientHandling->getFirstName() + "_gray_matter.mha";
 
-    QFileInfo checkResultFile(target);
+    if(this->grayMatterActor == NULL){
+        QString gmPath = this->patientHandling->getTridimensionelPath() + this->patientHandling->getLastName() + "__" +this->patientHandling->getFirstName() + "_gray_matter.mha";
+        QFileInfo checkResultFile(gmPath);
 
-    //! check if the target file exists and if yes: Is it really a file and no directory?
-    if((checkResultFile.exists() && checkResultFile.isFile()) ){
-        qDebug()<<"fichier existe deja";
-    }
-    else{
-        if(!this->systemDispatcher->extractBrainCortextFrom(this->patientHandling->getMraImageToBeDisplayed(), "gm", target)){
-            return;
+        //! check if the target file exists and if yes: Is it really a file and no directory?
+        if((checkResultFile.exists() && checkResultFile.isFile()) ){
+            qDebug()<<"fichier existe deja";
         }
+        else{
+            if(!this->systemDispatcher->extractBrainCortextFrom(this->patientHandling->getMraImageToBeDisplayed(), "gm", gmPath)){
+                return;
+            }
+        }
+        this->grayMatterActor = generatePolyDataActorFromMetaFile(gmPath, 105, 105, 105);
     }
 
-    this->reader->SetFileName(target.toLatin1().data());
-    this->reader->Update();
-
-
-    this->MC->SetInputData(reader->GetOutput());
-    this->MC->SetValue(0, 1);
-
-
-    this->deci->SetInputConnection(this->MC->GetOutputPort());
-    this->deci->SetTargetReduction(0.9);
-    this->deci->PreserveTopologyOn();
-
-
-    this->smooth->SetInputConnection(deci->GetOutputPort());
-    this->smooth->SetNumberOfIterations(1000);
-    this->smooth->BoundarySmoothingOn();
-
-
-    this->normals->SetInputConnection(smooth->GetOutputPort());
-    this->normals->FlipNormalsOn();
-
-//    this->stripperfilter=vtkSmartPointer<vtkStripper>::New();
-//    this->stripperfilter->SetInputConnection(this->MC->GetOutputPort());
-
-
-
-    this->MC_mapper->SetScalarVisibility(0);
-    this->MC_mapper->SetInputConnection(this->normals->GetOutputPort());
-    //this->MC_mapper->SetInputConnection(this->stripperfilter->GetOutputPort());
-
-
-    this->MC_actor->SetMapper(this->MC_mapper);
-    this->MC_actor->GetProperty()->SetColor(220.0/255,220.0/255,220.0/255);
-    this->MC_actor->GetProperty()->SetRepresentationToSurface();
-
-    this->mainRenderer->AddActor(this->MC_actor);
+    this->mainRenderer->AddActor(this->grayMatterActor);
 
     this->mainRenderer->ResetCamera();
     this->renderWindow->Render();
@@ -1969,61 +1998,30 @@ void SurgeryPlanWindow::whiteMatterOptionReleased(){
     imageOptionStates.interventionalRouteOptionState = false;
 
     qDebug()<<"start extractBrainCortext white matter";
-    QString target = this->patientHandling->getTridimensionelPath() + this->patientHandling->getLastName() + "__" +this->patientHandling->getFirstName() + "_white_matter.mha";
 
-    QFileInfo checkResultFile(target);
 
-    //! check if the target file exists and if yes: Is it really a file and no directory?
-    if((checkResultFile.exists() && checkResultFile.isFile()) ){
-        qDebug()<<"fichier existe deja";
-    }
-    else{
-        if(!this->systemDispatcher->extractBrainCortextFrom(this->patientHandling->getMraImageToBeDisplayed(), "wm",target)){
-            return;
+    if(this->whiteMatterActor == NULL){
+        QString wmPath = this->patientHandling->getTridimensionelPath() + this->patientHandling->getLastName() + "__" +this->patientHandling->getFirstName() + "_white_matter.mha";
+        QFileInfo checkResultFile(wmPath);
+
+        //! check if the target file exists and if yes: Is it really a file and no directory?
+        if((checkResultFile.exists() && checkResultFile.isFile()) ){
+            qDebug()<<"fichier existe deja";
         }
+        else{
+            if(!this->systemDispatcher->extractBrainCortextFrom(this->patientHandling->getMraImageToBeDisplayed(), "wm",wmPath)){
+                return;
+            }
+        }
+
+        this->whiteMatterActor = generatePolyDataActorFromMetaFile(wmPath, 255, 255, 255);
     }
 
-    this->reader->SetFileName(target.toLatin1().data());
-    this->reader->Update();
-
-
-    this->MC->SetInputData(reader->GetOutput());
-    this->MC->SetValue(0, 255);
-
-
-    this->deci->SetInputConnection(this->MC->GetOutputPort());
-    this->deci->SetTargetReduction(0.9);
-    this->deci->PreserveTopologyOn();
-
-
-    this->smooth->SetInputConnection(deci->GetOutputPort());
-    this->smooth->SetNumberOfIterations(1000);
-    this->smooth->BoundarySmoothingOn();
-
-
-    this->normals->SetInputConnection(smooth->GetOutputPort());
-    this->normals->FlipNormalsOn();
-
-    //this->stripperfilter=vtkSmartPointer<vtkStripper>::New();
-    //this->stripperfilter->SetInputConnection(this->MC->GetOutputPort());
-
-
-    this->MC_mapper->SetScalarVisibility(0);
-    this->MC_mapper->SetInputConnection(this->normals->GetOutputPort());
-    //this->MC_mapper->SetInputConnection(this->stripperfilter->GetOutputPort());
-
-
-    this->MC_actor->SetMapper(this->MC_mapper);
-    this->MC_actor->GetProperty()->SetColor(240.0/255,248.0/255,255.0/255);
-    this->MC_actor->GetProperty()->SetRepresentationToSurface();
-
-    this->mainRenderer->AddActor(this->MC_actor);
+    this->mainRenderer->AddActor(this->whiteMatterActor);
 
     this->mainRenderer->ResetCamera();
     this->renderWindow->Render();
     this->patientMRAImage->update();
-
-
 }
 
 //!--------------------------------------------------------------------------------------------------------------------------------
@@ -2061,6 +2059,9 @@ void SurgeryPlanWindow::vesselOptionClicked(){
 //! \brief SurgeryPlanWindow::vesselOptionReleased
 //!
 void SurgeryPlanWindow::vesselOptionReleased(){
+
+    this->mainRenderer->RemoveAllViewProps();
+
     originalOption->setStyleSheet( "border: 1px solid lightgrey;  border-radius: 0px; background-color: transparent;  min-width: 0px; color: lightgrey  "  );
     transparentBrainOption->setStyleSheet( "border: 1px solid lightgrey;  border-radius: 0px; background-color: transparent;  min-width: 0px; color: lightgrey  "  );
     greyMatterOption->setStyleSheet( "border: 1px solid lightgrey;  border-radius: 0px; background-color: transparent;  min-width: 0px; color: lightgrey  "  );
@@ -2081,6 +2082,28 @@ void SurgeryPlanWindow::vesselOptionReleased(){
     imageOptionStates.whiteMatterOptionState = false;
     imageOptionStates.vesselOptionState = true;
     imageOptionStates.interventionalRouteOptionState = false;
+
+    if(this->vesselActor == NULL){
+        QString vesselPath = this->patientHandling->getTridimensionelPath() + this->patientHandling->getLastName() + "__" +this->patientHandling->getFirstName() + "_vessel.mha";
+        qDebug()<<vesselPath;
+        QFileInfo checkResultFile(vesselPath);
+
+        //! check if the target file exists and if yes: Is it really a file and no directory?
+        if((checkResultFile.exists() && checkResultFile.isFile()) ){
+            qDebug()<<"fichier existe deja";
+        }
+        else{
+        }
+
+        this->vesselActor = generatePolyDataActorFromMetaFile(vesselPath, 204, 0, 0);
+    }
+
+    this->mainRenderer->AddActor(this->vesselActor);
+
+    this->mainRenderer->ResetCamera();
+    this->renderWindow->Render();
+    this->patientMRAImage->update();
+
 }
 
 

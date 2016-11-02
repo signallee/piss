@@ -189,11 +189,15 @@ public:
     //void calculateCenterOfTheVolume();
     void sfunctionSource();
     void cprMath();
+    vtkSmartPointer<vtkActor> generatePolyDataActorFromMetaFile(QString path, int r, int g, int b);
 
 protected:
     vtkEventQtSlotConnect* MraConnections;
 
 private:
+    vtkSmartPointer<vtkActor> grayMatterActor;
+    vtkSmartPointer<vtkActor> whiteMatterActor;
+    vtkSmartPointer<vtkActor> vesselActor;
 
     //! ---------------------------------------------------------------------------------------------------------
     //! MRI
@@ -348,14 +352,15 @@ private:
     vtkFixedPointVolumeRayCastMapper *volumeMapper;
 
     //ADD MC
-    vtkSmartPointer<vtkMetaImageReader> reader;
-    vtkSmartPointer<vtkMarchingCubes> MC;
-    vtkSmartPointer<vtkDecimatePro> deci;
-    vtkSmartPointer<vtkSmoothPolyDataFilter> smooth;
-    vtkSmartPointer<vtkPolyDataNormals> normals;
-    vtkSmartPointer<vtkStripper> stripperfilter;
-    vtkSmartPointer<vtkPolyDataMapper> MC_mapper;
-    vtkSmartPointer<vtkActor> MC_actor;
+//    vtkSmartPointer<vtkMetaImageReader> reader;
+//    vtkSmartPointer<vtkMarchingCubes> MC;
+//    vtkSmartPointer<vtkDecimatePro> deci;
+//    vtkSmartPointer<vtkSmoothPolyDataFilter> smooth;
+//    vtkSmartPointer<vtkPolyDataNormals> normals;
+//    vtkSmartPointer<vtkStripper> stripperfilter;
+//    vtkSmartPointer<vtkPolyDataMapper> MC_mapper;
+
+//    vtkSmartPointer<vtkActor> MC_actor;
 
     vtkVolume *volume;
     vtkSmartPointer<vtkRenderWindow> renderWindow;
